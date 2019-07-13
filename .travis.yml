@@ -1,0 +1,23 @@
+language: php
+
+php:
+  - 7.2
+
+services:
+  - postgresql
+
+matrix:
+  fast_finish: true
+
+install:
+  - composer install
+
+before_script:
+  - psql -c 'create database testing;' -U postgres
+
+script:
+  - vendor/bin/ecs check --config=ecs.yml .
+  - phpdbg -qrr vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+
+after_success:
+  - travis_retry vendor/bin/php-coveralls -v
