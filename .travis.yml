@@ -17,4 +17,3 @@ before_script:
 
 script:
   - vendor/bin/ecs check --config=ecs.yml .
-  - phpdbg -qrr vendor/bin/phpunit
