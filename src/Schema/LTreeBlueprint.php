@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Umbrellio\LTree\Schema;
 
 use Illuminate\Support\Fluent;

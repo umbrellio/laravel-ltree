@@ -8,7 +8,7 @@ use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Interfaces\LTreeServiceInterface;
 
-class LTreeService implements LTreeServiceInterface
+final class LTreeService implements LTreeServiceInterface
 {
     public function createPath(LTreeModelInterface $model): void
     {

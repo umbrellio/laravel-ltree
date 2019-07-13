@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Umbrellio\LTree\Types\LTreeType;
 use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
+use Umbrellio\LTree\Types\LTreeType;
 
 /**
  * @property LTreeModelInterface|Model|BelongsTo $ltreeParent
@@ -93,18 +93,12 @@ trait LTreeModelTrait
 
     public function getLtreeProxyUpdateColumns(): array
     {
-        return [
-            'updated_at',
-        ];
+        return ['updated_at'];
     }
 
     public function getLtreeProxyDeleteColumns(): array
     {
-        return [
-            'deleted_at',
-            'is_deleted',
-            'deleted_by',
-        ];
+        return ['deleted_at', 'is_deleted', 'deleted_by'];
     }
 
     public function renderAsLtree($value, $pad_string = LTreeHelper::PAD_STRING, $pad_type = LTreeHelper::PAD_TYPE)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Umbrellio\LTree\Collections;
 
 use Umbrellio\LTree\Helpers\LTreeBuilder;

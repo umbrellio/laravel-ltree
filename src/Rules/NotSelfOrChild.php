@@ -7,7 +7,7 @@ namespace Umbrellio\LTree\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 
-class NotSelfOrChild implements Rule
+final class NotSelfOrChild implements Rule
 {
     private $model;
 
