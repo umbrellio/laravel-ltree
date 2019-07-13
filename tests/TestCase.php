@@ -12,9 +12,6 @@ abstract class TestCase extends BaseTestCase
 {
     protected function getPackageProviders($app)
     {
-        return [
-            UmbrellioPostgresProvider::class,
-            LTreeServiceProvider::class,
-        ];
+        return [UmbrellioPostgresProvider::class, LTreeServiceProvider::class];
     }
 }

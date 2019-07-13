@@ -7,8 +7,8 @@ namespace Umbrellio\LTree\Helpers;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Umbrellio\LTree\Types\LTreeType;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
+use Umbrellio\LTree\Types\LTreeType;
 
 class LTreeHelper
 {
