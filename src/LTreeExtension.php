@@ -7,11 +7,13 @@ namespace Umbrellio\LTree;
 use Umbrellio\LTree\Connections\LTreeConnection;
 use Umbrellio\LTree\Schema\Grammars\LTreeSchemaGrammar;
 use Umbrellio\LTree\Schema\LTreeBlueprint;
+use Umbrellio\LTree\Types\LTreeType;
 use Umbrellio\Postgres\PostgresConnection;
 use Umbrellio\Postgres\Schema\Blueprint;
+use Umbrellio\Postgres\Schema\Extensions\AbstractExtension;
 use Umbrellio\Postgres\Schema\Grammars\PostgresGrammar;
 
-class LTreeExtension
+class LTreeExtension extends AbstractExtension
 {
     public const NAME = 'ltree';
 
@@ -21,10 +23,15 @@ class LTreeExtension
         PostgresGrammar::class => LTreeSchemaGrammar::class,
     ];
 
-    public static function register(): void
+    public static function getName(): string
     {
-        collect(static::$mixins)->each(static function ($mixin, $extension) {
-            $extension::mixin(new $mixin());
-        });
+        return static::NAME;
+    }
+
+    public static function getTypes(): array
+    {
+        return [
+            static::NAME => LTreeType::class,
+        ];
     }
 }
