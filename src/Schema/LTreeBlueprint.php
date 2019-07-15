@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\Schema;
 
 use Illuminate\Support\Fluent;
-use Umbrellio\LTree\LTreeExtension;
-use Umbrellio\Postgres\Schema\Extensions\AbstractBlueprintObject;
+use Umbrellio\LTree\Types\LTreeType;
+use Umbrellio\Postgres\Extensions\Schema\AbstractBlueprint;
 
-class LTreeBlueprint extends AbstractBlueprintObject
+class LTreeBlueprint extends AbstractBlueprint
 {
     public function ltree()
     {
         return function (string $column): Fluent {
-            return $this->addColumn(LTreeExtension::NAME, $column);
+            return $this->addColumn(LTreeType::TYPE_NAME, $column);
         };
     }
 }

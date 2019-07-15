@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Traits;
 
-use App\Infrastructure\Interfaces\AncestryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -17,9 +16,9 @@ use Umbrellio\LTree\Types\LTreeType;
 /**
  * @property LTreeModelInterface|Model|BelongsTo $ltreeParent
  * @property LTreeModelInterface[]|Model[]|Collection|HasMany $ltreeChildrens
- * @method static Builder|LTreeModelInterface|AncestryInterface descendantsOf($model, bool $reverse = true)
- * @method static Builder|LTreeModelInterface|AncestryInterface ancestorsOf($model, bool $reverse = true)
- * @method static Builder|LTreeModelInterface|AncestryInterface withoutSelf(int $id)
+ * @method static Builder|LTreeModelInterface descendantsOf($model, bool $reverse = true)
+ * @method static Builder|LTreeModelInterface ancestorsOf($model, bool $reverse = true)
+ * @method static Builder|LTreeModelInterface withoutSelf(int $id)
  */
 trait LTreeModelTrait
 {
@@ -98,7 +97,7 @@ trait LTreeModelTrait
 
     public function getLtreeProxyDeleteColumns(): array
     {
-        return ['deleted_at', 'is_deleted', 'deleted_by'];
+        return ['deleted_at'];
     }
 
     public function renderAsLtree($value, $pad_string = LTreeHelper::PAD_STRING, $pad_type = LTreeHelper::PAD_TYPE)

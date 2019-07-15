@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Schema\Grammars;
 
-use Umbrellio\LTree\LTreeExtension;
-use Umbrellio\Postgres\Schema\Extensions\AbstractGrammarObject;
+use Umbrellio\LTree\Types\LTreeType;
+use Umbrellio\Postgres\Extensions\Schema\Grammar\AbstractGrammar;
 
-class LTreeSchemaGrammar extends AbstractGrammarObject
+class LTreeSchemaGrammar extends AbstractGrammar
 {
     protected function typeLtree()
     {
         return function (): string {
-            return LTreeExtension::NAME;
+            return LTreeType::TYPE_NAME;
         };
     }
 }

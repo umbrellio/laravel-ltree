@@ -17,3 +17,7 @@ before_script:
 
 script:
   - vendor/bin/ecs check --config=ecs.yml .
+  - phpdbg -qrr vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+
+after_success:
+  - travis_retry vendor/bin/php-coveralls -v

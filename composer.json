@@ -12,6 +12,7 @@
   "require": {
     "php": "^7.2",
     "laravel/framework": "^5.8",
+    "doctrine/dbal": "^2.9",
     "umbrellio/laravel-pg-extensions": "2.*"
   },
   "require-dev": {

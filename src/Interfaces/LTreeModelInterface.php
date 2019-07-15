@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Interfaces;
 
-use App\Infrastructure\Interfaces\AncestryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,11 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property LTreeModelInterface|Model|BelongsTo|AncestryInterface $ltreeParent
- * @property LTreeModelInterface[]|Model[]|Collection|HasMany|AncestryInterface[] $ltreeChildrens
- * @method static Builder|LTreeModelInterface|AncestryInterface descendantsOf($model, bool $reverse = true)
- * @method static Builder|LTreeModelInterface|AncestryInterface ancestorsOf($model, bool $reverse = true)
- * @method static Builder|LTreeModelInterface|AncestryInterface withoutSelf(int $id)
+ * @property LTreeModelInterface|Model|BelongsTo $ltreeParent
+ * @property LTreeModelInterface[]|Model[]|Collection|HasMany $ltreeChildrens
+ * @method static Builder|LTreeModelInterface descendantsOf($model, bool $reverse = true)
+ * @method static Builder|LTreeModelInterface ancestorsOf($model, bool $reverse = true)
+ * @method static Builder|LTreeModelInterface withoutSelf(int $id)
  */
 interface LTreeModelInterface
 {
