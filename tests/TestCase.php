@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Umbrellio\Postgres\Tests;
+namespace Umbrellio\LTree\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Umbrellio\LTree\LTreeServiceProvider;

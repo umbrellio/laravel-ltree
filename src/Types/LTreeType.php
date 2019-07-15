@@ -6,11 +6,10 @@ namespace Umbrellio\LTree\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
-use Umbrellio\LTree\LTreeExtension;
 
 class LTreeType extends Type
 {
-    public const TYPE_NAME = LTreeExtension::NAME;
+    public const TYPE_NAME = 'ltree';
     public const TYPE_SEPARATE = '.';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string

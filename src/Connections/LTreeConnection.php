@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Connections;
 
-use Umbrellio\Postgres\Schema\Extensions\AbstractConnectionObject;
+use Umbrellio\Postgres\Extensions\Connectors\AbstractConnection;
 
-class LTreeConnection extends AbstractConnectionObject
+class LTreeConnection extends AbstractConnection
 {
 }
