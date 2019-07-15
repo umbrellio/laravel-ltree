@@ -43,7 +43,7 @@ class LTreeType extends Type
         return implode(static::TYPE_SEPARATE, $value);
     }
 
-    public function getName(): string
+    public function getName(bool $withDataSet = true): string
     {
         return self::TYPE_NAME;
     }
