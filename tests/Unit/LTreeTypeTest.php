@@ -38,7 +38,6 @@ class LTreeTypeTest extends TestCase
 
     /**
      * @dataProvider providePHPValues
-     *
      * @test
      */
     public function convertToPHPValue($value, $expected): void
@@ -55,7 +54,6 @@ class LTreeTypeTest extends TestCase
 
     /**
      * @dataProvider provideDatabaseValues
-     *
      * @test
      */
     public function convertToDatabaseValue($value, $expected): void
@@ -71,10 +69,8 @@ class LTreeTypeTest extends TestCase
         yield [[1, 2, 3], '1.2.3'];
     }
 
-    /**
-     * @test
-     */
-    public function getName(): void
+    /** @test */
+    public function getTypeName(): void
     {
         $this->assertSame(LTreeType::TYPE_NAME, $this->type->getName());
     }
