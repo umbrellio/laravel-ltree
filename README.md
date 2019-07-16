@@ -29,21 +29,9 @@ php composer.phar require umbrellio/laravel-ltree
   - update: updatePath(LTreeModelInterface $model)
   - delete: dropDescendants(LTreeModelInterface $model)
 
-## License
-
-Released under MIT License.
-
 ## Authors
 
 Created by Pavel Veselov.
-
-## Contributing
-
-- Fork it (https://github.com/umbrellio/laravel-ltree)
-- Create your feature branch (`git checkout -b feature/my-new-feature`)
-- Commit your changes (`git commit -am 'Add some feature'`)
-- Push to the branch (`git push origin feature/my-new-feature`)
-- Create new Pull Request
 
 <a href="https://github.com/umbrellio/">
 <img style="float: left;" src="https://umbrellio.github.io/Umbrellio/supported_by_umbrellio.svg" alt="Supported by Umbrellio" width="439" height="72">
