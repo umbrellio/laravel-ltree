@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04388b5e9936a0a89b5e6e4059d72371",
+    "content-hash": "d8242b67654998c051770abb4ceb70d0",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -2700,16 +2700,16 @@
         },
         {
             "name": "umbrellio/laravel-pg-extensions",
-            "version": "2.2.2.2",
+            "version": "2.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/umbrellio/laravel-pg-extensions.git",
-                "reference": "910b4059aeba7fbbd4e4bd7ed698896f3ae7e681"
+                "reference": "7d193d17ad24ef5da6da30918df318b670b4a1fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/910b4059aeba7fbbd4e4bd7ed698896f3ae7e681",
-                "reference": "910b4059aeba7fbbd4e4bd7ed698896f3ae7e681",
+                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/7d193d17ad24ef5da6da30918df318b670b4a1fa",
+                "reference": "7d193d17ad24ef5da6da30918df318b670b4a1fa",
                 "shasum": ""
             },
             "require": {
@@ -2741,7 +2741,7 @@
                     "email": "vetal@umbrellio.biz"
                 }
             ],
-            "time": "2019-07-17T09:39:46+00:00"
+            "time": "2019-07-16T11:28:28+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
