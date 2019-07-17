@@ -10,7 +10,7 @@ matrix:
   fast_finish: true
 
 install:
-  - composer install
+  - composer update
 
 before_script:
   - psql -c 'create database testing;' -U postgres
