@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d639cb125cd05c359d27151da7f38fe6",
+    "content-hash": "04388b5e9936a0a89b5e6e4059d72371",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -523,16 +523,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.8.28",
+            "version": "v5.8.29",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "341fb54bea9693cada2a5b8d398621a57f82862d"
+                "reference": "489ae2218c7eb138caac780de584d8df9fe8160b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/341fb54bea9693cada2a5b8d398621a57f82862d",
-                "reference": "341fb54bea9693cada2a5b8d398621a57f82862d",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/489ae2218c7eb138caac780de584d8df9fe8160b",
+                "reference": "489ae2218c7eb138caac780de584d8df9fe8160b",
                 "shasum": ""
             },
             "require": {
@@ -666,7 +666,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2019-07-09T14:00:02+00:00"
+            "time": "2019-07-16T14:05:28+00:00"
         },
         {
             "name": "league/flysystem",
@@ -832,16 +832,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.21.0",
+            "version": "2.21.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "da6410b77f74eecd98d24ffb6dfecefccf3ca17f"
+                "reference": "a8bfb6631e3bc982427406d13ad817fc45d47b61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/da6410b77f74eecd98d24ffb6dfecefccf3ca17f",
-                "reference": "da6410b77f74eecd98d24ffb6dfecefccf3ca17f",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/a8bfb6631e3bc982427406d13ad817fc45d47b61",
+                "reference": "a8bfb6631e3bc982427406d13ad817fc45d47b61",
                 "shasum": ""
             },
             "require": {
@@ -895,7 +895,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2019-07-14T17:06:46+00:00"
+            "time": "2019-07-17T07:49:05+00:00"
         },
         {
             "name": "opis/closure",
@@ -2700,16 +2700,16 @@
         },
         {
             "name": "umbrellio/laravel-pg-extensions",
-            "version": "2.2.0",
+            "version": "2.2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/umbrellio/laravel-pg-extensions.git",
-                "reference": "d4e311bf075efcd67ae354e31bd9d3c2eb939c78"
+                "reference": "910b4059aeba7fbbd4e4bd7ed698896f3ae7e681"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/d4e311bf075efcd67ae354e31bd9d3c2eb939c78",
-                "reference": "d4e311bf075efcd67ae354e31bd9d3c2eb939c78",
+                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/910b4059aeba7fbbd4e4bd7ed698896f3ae7e681",
+                "reference": "910b4059aeba7fbbd4e4bd7ed698896f3ae7e681",
                 "shasum": ""
             },
             "require": {
@@ -2741,7 +2741,7 @@
                     "email": "vetal@umbrellio.biz"
                 }
             ],
-            "time": "2019-07-15T20:07:56+00:00"
+            "time": "2019-07-17T09:39:46+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -3775,34 +3775,35 @@
         },
         {
             "name": "ocramius/package-versions",
-            "version": "1.4.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ocramius/PackageVersions.git",
-                "reference": "a4d4b60d0e60da2487bd21a2c6ac089f85570dbb"
+                "reference": "da0d9d34cd5df6b35756a00827aaeca7d903868d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/a4d4b60d0e60da2487bd21a2c6ac089f85570dbb",
-                "reference": "a4d4b60d0e60da2487bd21a2c6ac089f85570dbb",
+                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/da0d9d34cd5df6b35756a00827aaeca7d903868d",
+                "reference": "da0d9d34cd5df6b35756a00827aaeca7d903868d",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.0.0",
-                "php": "^7.1.0"
+                "php": "^7.3.0"
             },
             "require-dev": {
-                "composer/composer": "^1.6.3",
-                "doctrine/coding-standard": "^5.0.1",
+                "composer/composer": "^1.8.6",
+                "doctrine/coding-standard": "^6.0.0",
                 "ext-zip": "*",
-                "infection/infection": "^0.7.1",
-                "phpunit/phpunit": "^7.0.0"
+                "infection/infection": "^0.13.4",
+                "phpunit/phpunit": "^8.2.5",
+                "vimeo/psalm": "^3.4.9"
             },
             "type": "composer-plugin",
             "extra": {
                 "class": "PackageVersions\\Installer",
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "1.6.x-dev"
                 }
             },
             "autoload": {
@@ -3821,7 +3822,7 @@
                 }
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "time": "2019-02-21T12:16:21+00:00"
+            "time": "2019-07-17T05:00:30+00:00"
         },
         {
             "name": "orchestra/testbench",

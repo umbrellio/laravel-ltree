@@ -7,13 +7,13 @@ namespace Umbrellio\LTree;
 use Illuminate\Support\ServiceProvider;
 use Umbrellio\LTree\Interfaces\LTreeServiceInterface;
 use Umbrellio\LTree\Services\LTreeService;
-use Umbrellio\Postgres\UmbrellioPostgresProvider;
+use Umbrellio\Postgres\PostgresConnection;
 
 class LTreeServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        UmbrellioPostgresProvider::registerExtension(LTreeExtension::class);
+        PostgresConnection::registerExtension(LTreeExtension::class);
         $this->app->bind(LTreeServiceInterface::class, LTreeService::class);
     }
 }
