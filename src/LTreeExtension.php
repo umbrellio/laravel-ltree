@@ -20,9 +20,9 @@ class LTreeExtension extends AbstractExtension
     public static function getMixins(): array
     {
         return [
-            Blueprint::class => LTreeBlueprint::class,
-            PostgresConnection::class => LTreeConnection::class,
-            PostgresGrammar::class => LTreeSchemaGrammar::class,
+            LTreeBlueprint::class => Blueprint::class,
+            LTreeConnection::class => PostgresConnection::class,
+            LTreeSchemaGrammar::class => PostgresGrammar::class,
         ];
     }
 
