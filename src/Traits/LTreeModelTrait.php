@@ -112,7 +112,10 @@ trait LTreeModelTrait
 
     public function getAncestorByLevel(int $level = 1)
     {
-        $parentId = $this->getLtreePath()[--$level] ?? null;
-        return static::find($parentId);
+        return static::whereRaw(sprintf(
+                "({$this->getLtreePathColumn()} @> text2ltree('%s')) and  nlevel(path) = %d",
+                LTreeHelper::pathAsString($this->getLtreePath()),
+                $level)
+        )->first();
     }
 }
