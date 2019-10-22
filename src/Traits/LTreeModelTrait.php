@@ -104,4 +104,10 @@ trait LTreeModelTrait
     {
         return LTreeHelper::renderAsLTree($value, $this->getLtreeLevel(), $pad_string, $pad_type);
     }
+
+    public function getAncestorByLevel(int $level = 1)
+    {
+        $parentId = $this->getLtreePath()[--$level] ?? null;
+        return static::find($parentId);
+    }
 }

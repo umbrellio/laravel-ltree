@@ -151,6 +151,21 @@ class LtreeTest extends FunctionalTestCase
         })->toArray());
     }
 
+    /** @test */
+    public function getAncestorByLevel(): void
+    {
+        $tree = $this->createTreeNodes($this->getTreeNodes());
+        $parent = $tree[1];
+        $descendants = $parent::descendantsOf($parent)->withoutSelf(1);
+        $this->assertGreaterThan(0, $descendants->count());
+        $descendants->each(static function ($descendant) use ($parent) {
+            $descendant->getAncestorByLevel($parent->id);
+        });
+
+        $this->assertSame($tree[5]->getAncestorByLevel(2)->id, $tree[2]->id);
+        $this->assertSame($tree[8]->getAncestorByLevel(3)->id, $tree[6]->id);
+    }
+
     private function initLTreeService()
     {
         DB::statement('CREATE EXTENSION IF NOT EXISTS LTREE');
