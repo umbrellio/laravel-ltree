@@ -109,4 +109,13 @@ trait LTreeModelTrait
     {
         return LTreeHelper::renderAsLTree($value, $this->getLtreeLevel(), $pad_string, $pad_type);
     }
+
+    public function getAncestorByLevel(int $level = 1)
+    {
+        return static::whereRaw(sprintf(
+                "({$this->getLtreePathColumn()} @> text2ltree('%s')) and  nlevel(path) = %d",
+                LTreeHelper::pathAsString($this->getLtreePath()),
+                $level)
+        )->first();
+    }
 }

@@ -32,6 +32,7 @@ interface LTreeModelInterface
     public function getLtreeProxyDeleteColumns(): array;
     public function getLtreeProxyUpdateColumns(): array;
     public function isParentOf(int $id): bool;
+    public function getAncestorByLevel(int $level = 1);
 
     // relations
     public function ltreeParent(): BelongsTo;
