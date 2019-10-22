@@ -151,6 +151,16 @@ class LtreeTest extends FunctionalTestCase
         })->toArray());
     }
 
+    /** @test */
+    public function root(): void
+    {
+        $nodes = $this->createTreeNodes($this->getTreeNodes());
+        $roots = $nodes[1]::root()->get();
+        foreach ($roots as $root) {
+            $this->assertNull($root->parent_id);
+        }
+    }
+
     private function initLTreeService()
     {
         DB::statement('CREATE EXTENSION IF NOT EXISTS LTREE');
