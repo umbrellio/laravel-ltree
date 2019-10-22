@@ -67,6 +67,11 @@ trait LTreeModelTrait
         return self::descendantsOf($this)->withoutSelf($this->getKey())->find($id) !== null;
     }
 
+    public function scopeRoot(Builder $query): Builder
+    {
+        return $query->whereNull($this->getLtreeParentColumn());
+    }
+
     public function scopeDescendantsOf(Builder $query, $model, bool $reverse = true): Builder
     {
         return $query->whereRaw(sprintf(
