@@ -155,7 +155,7 @@ class LtreeTest extends FunctionalTestCase
     public function root(): void
     {
         $nodes = $this->createTreeNodes($this->getTreeNodes());
-        $roots = $nodes[0]::root()->get();
+        $roots = $nodes[1]::root()->get();
         foreach ($roots as $root) {
             $this->assertNull($root->parent_id);
         }
