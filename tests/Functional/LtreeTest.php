@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Tests\Functional;
 
-use DB;
+use Generator;
 use Illuminate\Database\Eloquent\Collection as CollectionBase;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
@@ -161,6 +161,51 @@ class LtreeTest extends FunctionalTestCase
         }
     }
 
+    public function provideBelongsLevels(): Generator
+    {
+        yield 'two_levels' => [
+            'category_id' => 3,
+            'expected1' => 1,
+            'expected2' => 3,
+            'expected3' => null,
+        ];
+        yield 'three_levels' => [
+            'category_id' => 6,
+            'expected1' => 1,
+            'expected2' => 3,
+            'expected3' => 6,
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideBelongsLevels
+     */
+    public function getBelongsToLevel($id, $level1, $level2, $level3)
+    {
+        $tree = $this->createTreeNodes($this->getTreeNodes());
+        $product = $this->getProduct();
+
+        $product->category()->associate($tree[$id]); // 1.3
+        $product->save();
+
+        $find = ProductStub::first();
+        $this->assertFalse(array_key_exists('category1', $find->toArray()));
+        $this->assertFalse(array_key_exists('category2', $find->toArray()));
+        $this->assertFalse(array_key_exists('category3', $find->toArray()));
+        $this->assertSame($level1, optional($find->category1)->id);
+        $this->assertSame($level2, optional($find->category2)->id);
+        $this->assertSame($level3, optional($find->category3)->id);
+
+        $find = ProductStub::with(['category1', 'category2', 'category3'])->first();
+        $this->assertTrue(array_key_exists('category1', $find->toArray()));
+        $this->assertTrue(array_key_exists('category2', $find->toArray()));
+        $this->assertTrue(array_key_exists('category3', $find->toArray()));
+        $this->assertSame($level1, optional($find->category1)->id);
+        $this->assertSame($level2, optional($find->category2)->id);
+        $this->assertSame($level3, optional($find->category3)->id);
+    }
+
     /** @test */
     public function getAncestorByLevel(): void
     {
@@ -188,6 +233,13 @@ class LtreeTest extends FunctionalTestCase
             $table->softDeletes();
             $table->tinyInteger('is_deleted')->unsigned()->default(1);
             $table->unique('path');
+        });
+        Schema::create('products', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('category_id')->nullable();
+            $table->timestamps(6);
+
+            $table->foreign('category_id')->on('categories')->references('id');
         });
         DB::statement("COMMENT ON COLUMN categories.path IS '(DC2Type:ltree)'");
         $this->ltreeService = app()->make(LTreeServiceInterface::class);
@@ -241,6 +293,11 @@ class LtreeTest extends FunctionalTestCase
         return $nodes;
     }
 
+    private function getProduct(array $data = []): ProductStub
+    {
+        return new ProductStub($data);
+    }
+
     /**
      * @return LTreeModelInterface|Model|LTreeModelTrait
      */
@@ -255,27 +312,9 @@ class LtreeTest extends FunctionalTestCase
         ]);
     }
 
-    private function getModel(array $data = []): LTreeModelInterface
+    private function getModel(array $data = []): CategoryStub
     {
-        return new class($data) extends Model implements LTreeModelInterface {
-            use SoftDeletes;
-            use LTreeModelTrait {
-                getLtreeProxyDeleteColumns as getBaseLtreeProxyDeleteColumns;
-            }
-
-            protected $table = 'categories';
-
-            protected $fillable = ['id', 'parent_id', 'path', 'is_deleted'];
-
-            protected $dateFormat = 'Y-m-d H:i:s.u';
-
-            protected $dates = ['created_at', 'updated_at', 'deleted_at'];
-
-            public function getLtreeProxyDeleteColumns(): array
-            {
-                return array_merge($this->getBaseLtreeProxyDeleteColumns(), ['is_deleted']);
-            }
-        };
+        return new CategoryStub($data);
     }
 
     /**

@@ -7,56 +7,110 @@ namespace Umbrellio\LTree\Relations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\JoinClause;
+use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 
-class BelongsToLevel extends Relation
+class BelongsToLevel extends BelongsTo
 {
     use SupportsDefaultModels;
 
     protected $level;
+    protected $throwRelationName;
 
-    protected $relationName;
-
-    public function __construct(Builder $query, Model $parent, int $level, $relationName)
-    {
+    public function __construct(
+        Builder $query,
+        Model $child,
+        string $throwRelationName,
+        int $level,
+        string $foreignKey,
+        string $ownerKey,
+        string $relationName
+    ) {
         $this->level = $level;
-        $this->relationName = $relationName;
+        $this->throwRelationName = $throwRelationName;
 
-        parent::__construct($query, $parent);
+        parent::__construct($query, $child, $foreignKey, $ownerKey, $relationName);
     }
 
     public function addConstraints()
     {
-        $this->query->ancestorByLevel($this->level);
+        if (static::$constraints) {
+            $relation = $this->child->{$this->throwRelationName};
+
+            if ($relation) {
+                $this->query = $relation->newQuery()->ancestorByLevel($this->level);
+            }
+        }
     }
 
     public function addEagerConstraints(array $models)
     {
-        $this->query->ancestorByLevel($this->level);
+        $key = $this->related->getTable() . '.' . $this->ownerKey;
+
+        $whereIn = $this->whereInMethod($this->related, $this->ownerKey);
+
+        $this->query->{$whereIn}($key, $this->getEagerModelKeys($models));
+
+        $table = $this->getModel()->getTable();
+        $alias = sprintf('%s_depends', $table);
+
+        $this->query->join(
+            sprintf('%s as %s', $table, $alias),
+            function (JoinClause $query) use ($alias, $table) {
+                /** @var LTreeModelInterface $related */
+                $related = $this->child->{$this->throwRelationName}()->related;
+
+                $query->whereRaw(sprintf(
+                    '%1$s.%2$s @> %3$s.%2$s and nlevel(%1$s.%2$s) = %4$d',
+                    $alias,
+                    $related->getLtreePathColumn(),
+                    $table,
+                    $this->level
+                ));
+            }
+        );
+
+        $this->query->selectRaw(sprintf('%s.*, json_agg(%s.%s) as relation_ids', $alias, $table, $this->ownerKey));
+
+        $this->query->groupBy($alias . '.id');
     }
 
-    public function initRelation(array $models, $relation)
+    public function match(array $models, Collection $results, $relation)
     {
+        $owner = $this->ownerKey;
+
+        $dictionary = [];
+
+        foreach ($results as $result) {
+            $result->relation_ids = json_decode($result->relation_ids);
+            $dictionary[$result->getAttribute($owner)] = $result;
+        }
+
         foreach ($models as $model) {
-            $model->setRelation($relation, $this->getDefaultFor($model));
+            foreach ($dictionary as $related) {
+                if (in_array($model->getAttribute($this->foreignKey), $related->relation_ids, true)) {
+                    $model->setRelation($relation, $related);
+                }
+            }
         }
 
         return $models;
     }
 
-    public function match(array $models, Collection $results, $relation)
+    protected function getEagerModelKeys(array $models)
     {
-        return $models;
-    }
+        $keys = [];
 
-    public function getResults()
-    {
-        return $this->query->first();
-    }
+        foreach ($models as $model) {
+            if (($value = $model->{$this->foreignKey}) !== null) {
+                $keys[] = $value;
+            }
+        }
 
-    protected function newRelatedInstanceFor(Model $parent)
-    {
-        return $this->related->newInstance();
+        sort($keys);
+
+        return array_values(array_unique($keys));
     }
 }
