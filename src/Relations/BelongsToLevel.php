@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Infrastructure\Models;
+declare(strict_types=1);
+
+namespace Umbrellio\LTree\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

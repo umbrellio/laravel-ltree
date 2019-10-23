@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Infrastructure\Traits;
+declare(strict_types=1);
 
-use App\Infrastructure\Models\BelongsToLevel;
+namespace Umbrellio\LTree\Traits;
+
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Model;
-use Umbrellio\LTree\Traits\LTreeModelTrait;
+use Umbrellio\LTree\Relations\BelongsToLevel;
 
 /**
  * @mixin HasRelationships
@@ -16,7 +17,7 @@ trait HasTreeRelationships
 {
     protected function belongsToLevel($related, int $level = 1, ?Model $instance = null, ?string $relation = null)
     {
-        if (is_null($relation)) {
+        if ($relation === null) {
             $relation = $this->guessBelongsToRelation();
         }
 
