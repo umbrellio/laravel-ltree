@@ -112,15 +112,15 @@ trait LTreeModelTrait
 
     public function getAncestorByLevel(int $level = 1)
     {
-        return static::scopeAncestorByLevel($level)->first();
+        return static::ancestorByLevel($level)->first();
     }
 
     public function scopeAncestorByLevel(Builder $query, int $level = 1): Builder
     {
         return $query->whereRaw(sprintf(
-                "({$this->getLtreePathColumn()} @> text2ltree('%s')) and nlevel(path) = %d",
-                LTreeHelper::pathAsString($this->getLtreePath()),
-                $level)
+            "({$this->getLtreePathColumn()} @> text2ltree('%s')) and nlevel(path) = %d",
+            LTreeHelper::pathAsString($this->getLtreePath()),
+            $level)
         );
     }
 }
