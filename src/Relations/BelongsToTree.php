@@ -31,7 +31,7 @@ class BelongsToTree extends Relation
         parent::__construct($query, $child);
     }
 
-    public function addConstraints():void
+    public function addConstraints(): void
     {
         if (static::$constraints) {
             $relation = $this->child->{$this->throughRelationName};
@@ -42,7 +42,7 @@ class BelongsToTree extends Relation
         }
     }
 
-    public function addEagerConstraints(array $models):void
+    public function addEagerConstraints(array $models): void
     {
         $key = $this->related->getTable() . '.' . $this->ownerKey;
 
@@ -52,7 +52,6 @@ class BelongsToTree extends Relation
 
         $table = $this->getModel()->getTable();
         $alias = sprintf('%s_depends', $table);
-
 
         $this->query->join(
             sprintf('%s as %s', $table, $alias),
@@ -93,6 +92,29 @@ class BelongsToTree extends Relation
         return $models;
     }
 
+    public function getResults()
+    {
+        return !is_null($this->getParentKey())
+            ? $this->query->get()
+            : $this->related->newCollection();
+    }
+
+    /**
+     * Initialize the relation on a set of models.
+     *
+     * @param array $models
+     * @param string $relation
+     * @return array
+     */
+    public function initRelation(array $models, $relation)
+    {
+        foreach ($models as $model) {
+            $model->setRelation($relation, $this->related->newCollection());
+        }
+
+        return $models;
+    }
+
     protected function getEagerModelKeys(array $models)
     {
         $keys = [];
@@ -106,28 +128,5 @@ class BelongsToTree extends Relation
         sort($keys);
 
         return array_values(array_unique($keys));
-    }
-
-    public function getResults()
-    {
-        return ! is_null($this->getParentKey())
-            ? $this->query->get()
-            : $this->related->newCollection();
-    }
-
-    /**
-     * Initialize the relation on a set of models.
-     *
-     * @param  array   $models
-     * @param  string  $relation
-     * @return array
-     */
-    public function initRelation(array $models, $relation)
-    {
-        foreach ($models as $model) {
-            $model->setRelation($relation, $this->related->newCollection());
-        }
-
-        return $models;
     }
 }
