@@ -17,19 +17,19 @@ class BelongsToLevel extends BelongsTo
     use SupportsDefaultModels;
 
     protected $level;
-    protected $throwRelationName;
+    protected $throughRelationName;
 
     public function __construct(
         Builder $query,
         Model $child,
-        string $throwRelationName,
+        string $throughRelationName,
         int $level,
         string $foreignKey,
         string $ownerKey,
         string $relationName
     ) {
         $this->level = $level;
-        $this->throwRelationName = $throwRelationName;
+        $this->throughRelationName = $throughRelationName;
 
         parent::__construct($query, $child, $foreignKey, $ownerKey, $relationName);
     }
@@ -37,7 +37,7 @@ class BelongsToLevel extends BelongsTo
     public function addConstraints()
     {
         if (static::$constraints) {
-            $relation = $this->child->{$this->throwRelationName};
+            $relation = $this->child->{$this->throughRelationName};
 
             if ($relation) {
                 $this->query = $relation->newQuery()->ancestorByLevel($this->level);
@@ -60,7 +60,7 @@ class BelongsToLevel extends BelongsTo
             sprintf('%s as %s', $table, $alias),
             function (JoinClause $query) use ($alias, $table) {
                 /** @var LTreeModelInterface $related */
-                $related = $this->child->{$this->throwRelationName}()->related;
+                $related = $this->child->{$this->throughRelationName}()->related;
 
                 $query->whereRaw(sprintf(
                     '%1$s.%2$s @> %3$s.%2$s and nlevel(%1$s.%2$s) = %4$d',
