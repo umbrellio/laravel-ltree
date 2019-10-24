@@ -34,10 +34,10 @@ class BelongsToTree extends Relation
     public function addConstraints(): void
     {
         if (static::$constraints) {
-            $relation = $this->child->{$this->throughRelationName};
+            $relation = $this->parent->{$this->throughRelationName};
 
             if ($relation) {
-                $this->query = $relation->newQuery()->orderBy('path')->ancestorByLevel($this->level);
+                $this->query = $relation->newQuery()->ancestorsOf($relation)->orderBy('path');
             }
         }
     }
@@ -57,7 +57,7 @@ class BelongsToTree extends Relation
             sprintf('%s as %s', $table, $alias),
             function (JoinClause $query) use ($alias, $table) {
                 /** @var LTreeModelInterface $related */
-                $related = $this->child->{$this->throughRelationName}()->related;
+                $related = $this->parent->{$this->throughRelationName}()->related;
 
                 $query->whereRaw(sprintf(
                     '%1$s.%2$s @> %3$s.%2$s',
@@ -99,6 +99,7 @@ class BelongsToTree extends Relation
             : $this->related->newCollection();
     }
 
+
     /**
      * Initialize the relation on a set of models.
      *
@@ -128,5 +129,10 @@ class BelongsToTree extends Relation
         sort($keys);
 
         return array_values(array_unique($keys));
+    }
+
+    private function getParentKey()
+    {
+        return $this->parent->{$this->foreignKey};
     }
 }

@@ -190,14 +190,13 @@ class LtreeTest extends FunctionalTestCase
         $product->save();
 
         $find = ProductStub::first();
-        $this->assertFalse(array_key_exists('category', $find->toArray()));
+        $this->assertFalse(array_key_exists('categoryTree', $find->toArray()));
         $this->assertSame($level1, optional($find->categoryTree->get(0))->id);
         $this->assertSame($level2, optional($find->categoryTree->get(1))->id);
         $this->assertSame($level3, optional($find->categoryTree->get(2))->id);
 
         $find = ProductStub::with('categoryTree')->first();
-        $this->assertTrue(array_key_exists('categoryTree', $find->toArray()));
-        $this->assertSame(3, $find->categoryTree->count());
+        $this->assertSame(2, $find->categoryTree->count());
         $this->assertSame($level1, optional($find->categoryTree->get(0))->id);
         $this->assertSame($level2, optional($find->categoryTree->get(1))->id);
         $this->assertSame($level3, optional($find->categoryTree->get(2))->id);
