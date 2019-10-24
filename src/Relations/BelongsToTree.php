@@ -7,45 +7,42 @@ namespace Umbrellio\LTree\Relations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 
-class BelongsToLevel extends BelongsTo
+class BelongsToTree extends Relation
 {
-    use SupportsDefaultModels;
-
-    protected $level;
     protected $throughRelationName;
+    private $foreignKey;
+    private $ownerKey;
 
     public function __construct(
         Builder $query,
         Model $child,
         string $throughRelationName,
-        int $level,
         string $foreignKey,
-        string $ownerKey,
-        string $relationName
+        string $ownerKey
     ) {
-        $this->level = $level;
         $this->throughRelationName = $throughRelationName;
+        $this->foreignKey = $foreignKey;
+        $this->ownerKey = $ownerKey;
 
-        parent::__construct($query, $child, $foreignKey, $ownerKey, $relationName);
+        parent::__construct($query, $child);
     }
 
-    public function addConstraints()
+    public function addConstraints():void
     {
         if (static::$constraints) {
             $relation = $this->child->{$this->throughRelationName};
 
             if ($relation) {
-                $this->query = $relation->newQuery()->ancestorByLevel($this->level);
+                $this->query = $relation->newQuery()->orderBy('path')->ancestorByLevel($this->level);
             }
         }
     }
 
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models):void
     {
         $key = $this->related->getTable() . '.' . $this->ownerKey;
 
@@ -56,6 +53,7 @@ class BelongsToLevel extends BelongsTo
         $table = $this->getModel()->getTable();
         $alias = sprintf('%s_depends', $table);
 
+
         $this->query->join(
             sprintf('%s as %s', $table, $alias),
             function (JoinClause $query) use ($alias, $table) {
@@ -63,35 +61,31 @@ class BelongsToLevel extends BelongsTo
                 $related = $this->child->{$this->throughRelationName}()->related;
 
                 $query->whereRaw(sprintf(
-                    '%1$s.%2$s @> %3$s.%2$s and nlevel(%1$s.%2$s) = %4$d',
+                    '%1$s.%2$s @> %3$s.%2$s',
                     $alias,
                     $related->getLtreePathColumn(),
-                    $table,
-                    $this->level
+                    $table
                 ));
             }
         );
 
-        $this->query->selectRaw(sprintf('%s.*, json_agg(%s.%s) as relation_ids', $alias, $table, $this->ownerKey));
+        $this->query->orderBy('path');
 
-        $this->query->groupBy($alias . '.id');
+        $this->query->selectRaw(sprintf('%s.*, %s.%s as relation_id', $alias, $table, $this->ownerKey));
     }
 
     public function match(array $models, Collection $results, $relation)
     {
-        $owner = $this->ownerKey;
-
         $dictionary = [];
 
         foreach ($results as $result) {
-            $result->relation_ids = json_decode($result->relation_ids);
-            $dictionary[$result->getAttribute($owner)] = $result;
+            $dictionary[$result->relation_id][] = $result;
         }
 
         foreach ($models as $model) {
-            foreach ($dictionary as $related) {
-                if (in_array($model->getAttribute($this->foreignKey), $related->relation_ids, true)) {
-                    $model->setRelation($relation, $related);
+            foreach ($dictionary as $related => $value) {
+                if ($model->getAttribute($this->foreignKey) === $related) {
+                    $model->setRelation($relation, $this->related->newCollection($value));
                 }
             }
         }
@@ -112,5 +106,28 @@ class BelongsToLevel extends BelongsTo
         sort($keys);
 
         return array_values(array_unique($keys));
+    }
+
+    public function getResults()
+    {
+        return ! is_null($this->getParentKey())
+            ? $this->query->get()
+            : $this->related->newCollection();
+    }
+
+    /**
+     * Initialize the relation on a set of models.
+     *
+     * @param  array   $models
+     * @param  string  $relation
+     * @return array
+     */
+    public function initRelation(array $models, $relation)
+    {
+        foreach ($models as $model) {
+            $model->setRelation($relation, $this->related->newCollection());
+        }
+
+        return $models;
     }
 }

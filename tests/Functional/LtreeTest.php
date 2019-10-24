@@ -161,7 +161,7 @@ class LtreeTest extends FunctionalTestCase
         }
     }
 
-    public function provideBelongsLevels(): Generator
+    public function provideBelongsTree(): Generator
     {
         yield 'two_levels' => [
             'category_id' => 3,
@@ -179,9 +179,9 @@ class LtreeTest extends FunctionalTestCase
 
     /**
      * @test
-     * @dataProvider provideBelongsLevels
+     * @dataProvider provideBelongsTree
      */
-    public function getBelongsToLevel($id, $level1, $level2, $level3)
+    public function getBelongsToTree($id, $level1, $level2, $level3)
     {
         $tree = $this->createTreeNodes($this->getTreeNodes());
         $product = $this->getProduct();
@@ -190,20 +190,17 @@ class LtreeTest extends FunctionalTestCase
         $product->save();
 
         $find = ProductStub::first();
-        $this->assertFalse(array_key_exists('category1', $find->toArray()));
-        $this->assertFalse(array_key_exists('category2', $find->toArray()));
-        $this->assertFalse(array_key_exists('category3', $find->toArray()));
-        $this->assertSame($level1, optional($find->category1)->id);
-        $this->assertSame($level2, optional($find->category2)->id);
-        $this->assertSame($level3, optional($find->category3)->id);
+        $this->assertFalse(array_key_exists('category', $find->toArray()));
+        $this->assertSame($level1, optional($find->category->get(0))->id);
+        $this->assertSame($level2, optional($find->category->get(1))->id);
+        $this->assertSame($level3, optional($find->category->get(2))->id);
 
-        $find = ProductStub::with(['category1', 'category2', 'category3'])->first();
-        $this->assertTrue(array_key_exists('category1', $find->toArray()));
-        $this->assertTrue(array_key_exists('category2', $find->toArray()));
-        $this->assertTrue(array_key_exists('category3', $find->toArray()));
-        $this->assertSame($level1, optional($find->category1)->id);
-        $this->assertSame($level2, optional($find->category2)->id);
-        $this->assertSame($level3, optional($find->category3)->id);
+        $find = ProductStub::with('categoryTree')->first();
+        $this->assertTrue(array_key_exists('categoryTree', $find->toArray()));
+        $this->assertEquals(3, $find->categoryTree->count());
+        $this->assertSame($level1, optional($find->category->get(0))->id);
+        $this->assertSame($level2, optional($find->category->get(1))->id);
+        $this->assertSame($level3, optional($find->category->get(2))->id);
     }
 
     /** @test */
