@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
-use Umbrellio\LTree\Relations\BelongsToLevel;
 use Umbrellio\LTree\Relations\BelongsToTree;
 
 /**
@@ -33,7 +32,6 @@ trait HasTreeRelationships
         ?string $foreignKey = null,
         $ownerKey = null
     ) {
-
         $instance = $this->newRelatedInstance($related);
 
         if (!$instance instanceof LTreeModelInterface) {
@@ -49,12 +47,6 @@ trait HasTreeRelationships
 
         $ownerKey = $ownerKey ?: $instance->getKeyName();
 
-        return new BelongsToTree(
-            $instance->newQuery(),
-            $this,
-            $throwRelation,
-            $foreignKey,
-            $ownerKey
-        );
+        return new BelongsToTree($instance->newQuery(), $this, $throwRelation, $foreignKey, $ownerKey);
     }
 }
