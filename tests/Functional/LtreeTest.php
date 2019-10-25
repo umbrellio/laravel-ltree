@@ -165,12 +165,14 @@ class LtreeTest extends FunctionalTestCase
     {
         yield 'two_levels' => [
             'category_id' => 3,
+            'count' => 2,
             'expected1' => 1,
             'expected2' => 3,
             'expected3' => null,
         ];
         yield 'three_levels' => [
             'category_id' => 6,
+            'count' => 3,
             'expected1' => 1,
             'expected2' => 3,
             'expected3' => 6,
@@ -181,7 +183,7 @@ class LtreeTest extends FunctionalTestCase
      * @test
      * @dataProvider provideBelongsTree
      */
-    public function getBelongsToTree($id, $level1, $level2, $level3)
+    public function getBelongsToTree($id, $count, $level1, $level2, $level3)
     {
         $tree = $this->createTreeNodes($this->getTreeNodes());
         $product = $this->getProduct();
@@ -196,7 +198,7 @@ class LtreeTest extends FunctionalTestCase
         $this->assertSame($level3, optional($find->categoryTree->get(2))->id);
 
         $find = ProductStub::with('categoryTree')->first();
-        $this->assertSame(2, $find->categoryTree->count());
+        $this->assertSame($count, $find->categoryTree->count());
         $this->assertSame($level1, optional($find->categoryTree->get(0))->id);
         $this->assertSame($level2, optional($find->categoryTree->get(1))->id);
         $this->assertSame($level3, optional($find->categoryTree->get(2))->id);
