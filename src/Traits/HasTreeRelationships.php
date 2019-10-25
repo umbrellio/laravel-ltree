@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
-use Umbrellio\LTree\Relations\BelongsToLevel;
+use Umbrellio\LTree\Relations\BelongsToTree;
 
 /**
  * @mixin HasRelationships
@@ -20,26 +20,18 @@ trait HasTreeRelationships
     /**
      * @param string $related
      * @param string $throwRelation
-     * @param int $level
      * @param string|null $foreignKey
      * @param null $ownerKey
-     * @param string|null $relation
-     * @return BelongsToLevel
+     * @return BelongsToTree
      *
      * @throws InvalidTraitInjectionClass
      */
-    protected function belongsToLevel(
+    protected function belongsToTree(
         string $related,
         string $throwRelation,
-        int $level = 1,
         ?string $foreignKey = null,
-        $ownerKey = null,
-        ?string $relation = null
+        $ownerKey = null
     ) {
-        if ($relation === null) {
-            $relation = $this->guessBelongsToRelation();
-        }
-
         $instance = $this->newRelatedInstance($related);
 
         if (!$instance instanceof LTreeModelInterface) {
@@ -55,14 +47,6 @@ trait HasTreeRelationships
 
         $ownerKey = $ownerKey ?: $instance->getKeyName();
 
-        return new BelongsToLevel(
-            $instance->newQuery(),
-            $this,
-            $throwRelation,
-            $level,
-            $foreignKey,
-            $ownerKey,
-            $relation
-        );
+        return new BelongsToTree($instance->newQuery(), $this, $throwRelation, $foreignKey, $ownerKey);
     }
 }
