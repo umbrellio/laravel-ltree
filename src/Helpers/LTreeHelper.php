@@ -45,7 +45,7 @@ class LTreeHelper
         $model->refresh();
     }
 
-    public static function moveNode(LTreeModelInterface $model, $to = null, array $proxyColumns = []): void
+    public static function moveNode(LTreeModelInterface $model, ?LTreeModelInterface $to = null, array $proxyColumns = []): void
     {
         $pathName = $model->getLtreePathColumn();
         $oldPath = $model->getLtreePath(LTreeModelInterface::AS_STRING);
