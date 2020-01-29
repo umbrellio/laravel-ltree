@@ -31,7 +31,7 @@ php composer.phar require umbrellio/laravel-ltree
 
 ## Authors
 
-Created by Pavel Veselov.
+Created by Korben Dallas.
 
 <a href="https://github.com/umbrellio/">
 <img style="float: left;" src="https://umbrellio.github.io/Umbrellio/supported_by_umbrellio.svg" alt="Supported by Umbrellio" width="439" height="72">
