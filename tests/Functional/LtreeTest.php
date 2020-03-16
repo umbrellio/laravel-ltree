@@ -137,6 +137,7 @@ class LtreeTest extends FunctionalTestCase
     /** @test */
     public function ancestors(): void
     {
+        $this->assertSame(0, LTreeHelper::getAncestors(new CollectionBase()));
         $nodes = $this->createTreeNodes($this->getTreeNodes());
         $this->assertSame(3, $nodes[1]::ancestorsOf($nodes[6])->get()->count());
         $this->assertTrue($nodes[2]->isParentOf(5));
