@@ -93,8 +93,11 @@ class LTreeHelper
 
     public static function getAncestors(Collection $collection): Collection
     {
+        if ($collection->count() === 0) {
+            return new Collection();
+        }
         $first = $collection->first();
-        $paths = $collection->pluck('path')->map(function ($item) {
+        $paths = $collection->pluck($first->getLtreePathColumn())->map(function ($item) {
             return "'${item}'";
         });
         $paths = $paths->implode(', ');
