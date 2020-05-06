@@ -151,6 +151,28 @@ class LtreeTest extends FunctionalTestCase
         })->toArray());
     }
 
+    public function providePaths(): Generator
+    {
+        yield 'single_as_array' => [
+            'paths' => ['11.12'],
+            'expected' => 2,
+        ];
+        yield 'all_as_array' => [
+            'paths' => ['11.12', '1.2.5'],
+            'expected' => 5,
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providePaths
+     */
+    public function parentsOf(array $paths, int $expectedCount): void
+    {
+        $this->createTreeNodes($this->getTreeNodes());
+        $this->assertCount($expectedCount, CategoryStub::parentsOf($paths)->get());
+    }
+
     /** @test */
     public function root(): void
     {
