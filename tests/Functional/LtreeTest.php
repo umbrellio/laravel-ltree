@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Interfaces\LTreeServiceInterface;
@@ -257,6 +258,21 @@ class LtreeTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function missingLtreeModel(): void
+    {
+        $rootSome = $this->getCategorySome();
+        $rootSome->save();
+
+        $childSome = $this->getCategorySome(['parent_id' => $rootSome->id]);
+        $childSome->save();
+
+        $this->expectException(InvalidTraitInjectionClass::class);
+        $childSome->parentTree();
+    }
+
+    /**
+     * @test
+     */
     public function getAncestorByLevel(): void
     {
         $tree = $this->createTreeNodes($this->getTreeNodes());
@@ -346,6 +362,11 @@ class LtreeTest extends FunctionalTestCase
     private function getProduct(array $data = []): ProductStub
     {
         return new ProductStub($data);
+    }
+
+    private function getCategorySome(array $data = []): CategorySomeStub
+    {
+        return new CategorySomeStub($data);
     }
 
     /**
