@@ -18,6 +18,7 @@ use Umbrellio\LTree\Types\LTreeType;
  * @property LTreeModelInterface[]|Model[]|Collection|HasMany $ltreeChildrens
  * @method static Builder|LTreeModelInterface descendantsOf($model, bool $reverse = true)
  * @method static Builder|LTreeModelInterface ancestorsOf($model, bool $reverse = true)
+ * @method static Builder|LTreeModelInterface parentsOf(array $paths)
  * @method static Builder|LTreeModelInterface withoutSelf(int $id)
  */
 trait LTreeModelTrait
@@ -65,6 +66,15 @@ trait LTreeModelTrait
     public function isParentOf(int $id): bool
     {
         return self::descendantsOf($this)->withoutSelf($this->getKey())->find($id) !== null;
+    }
+
+    public function scopeParentsOf(Builder $query, array $paths): Builder
+    {
+        return $this->whereRaw(sprintf(
+            "%s @> array['%s']::ltree[]",
+            $this->getLtreePathColumn(),
+            implode("', '", $paths)
+        ));
     }
 
     public function scopeRoot(Builder $query): Builder

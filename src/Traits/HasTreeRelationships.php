@@ -18,9 +18,6 @@ use Umbrellio\LTree\Relations\BelongsToTree;
 trait HasTreeRelationships
 {
     /**
-     * @param string $related
-     * @param string $throwRelation
-     * @param string|null $foreignKey
      * @param null $ownerKey
      * @return BelongsToTree
      *
