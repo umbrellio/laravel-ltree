@@ -10,10 +10,14 @@ use Umbrellio\LTree\Types\LTreeType;
 
 class LTreeTypeTest extends TestCase
 {
-    /** @var AbstractPlatform */
+    /**
+     * @var AbstractPlatform
+     */
     private $abstractPlatform;
 
-    /** @var LTreeType */
+    /**
+     * @var LTreeType
+     */
     private $type;
 
     protected function setUp(): void
@@ -69,7 +73,9 @@ class LTreeTypeTest extends TestCase
         yield [[1, 2, 3], '1.2.3'];
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function getTypeName(): void
     {
         $this->assertSame(LTreeType::TYPE_NAME, $this->type->getName());

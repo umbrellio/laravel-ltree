@@ -103,7 +103,6 @@ class BelongsToTree extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param array $models
      * @param string $relation
      * @return array
      */
