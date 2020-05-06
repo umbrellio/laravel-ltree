@@ -255,19 +255,19 @@ class LtreeTest extends FunctionalTestCase
         $this->assertSame($level3, optional($find->categoryTree->get(2))->id);
     }
 
+    /**
+     * @test
+     */
     public function missingLtreeModel(): void
     {
-        $rootSome = $this->getSome(['id' => 1]);
+        $rootSome = $this->getCategorySome();
         $rootSome->save();
 
-        $childSome = $this->getSome([
-            'id' => 2,
-            'some_id' => $rootSome->id,
-        ]);
+        $childSome = $this->getCategorySome(['parent_id' => $rootSome->id]);
         $childSome->save();
 
         $this->expectException(InvalidTraitInjectionClass::class);
-        $childSome->someTree();
+        $childSome->parentTree();
     }
 
     /**
@@ -364,9 +364,9 @@ class LtreeTest extends FunctionalTestCase
         return new ProductStub($data);
     }
 
-    private function getSome(array $data = []): SomeStub
+    private function getCategorySome(array $data = []): CategorySomeStub
     {
-        return new SomeStub($data);
+        return new CategorySomeStub($data);
     }
 
     /**
