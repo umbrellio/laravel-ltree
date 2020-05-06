@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Interfaces\LTreeServiceInterface;
@@ -254,6 +255,21 @@ class LtreeTest extends FunctionalTestCase
         $this->assertSame($level3, optional($find->categoryTree->get(2))->id);
     }
 
+    public function missingLtreeModel(): void
+    {
+        $rootSome = $this->getSome(['id' => 1]);
+        $rootSome->save();
+
+        $childSome = $this->getSome([
+            'id' => 2,
+            'some_id' => $rootSome->id,
+        ]);
+        $childSome->save();
+
+        $this->expectException(InvalidTraitInjectionClass::class);
+        $childSome->someTree();
+    }
+
     /**
      * @test
      */
@@ -346,6 +362,11 @@ class LtreeTest extends FunctionalTestCase
     private function getProduct(array $data = []): ProductStub
     {
         return new ProductStub($data);
+    }
+
+    private function getSome(array $data = []): SomeStub
+    {
+        return new SomeStub($data);
     }
 
     /**
