@@ -71,9 +71,9 @@ trait LTreeModelTrait
     public function scopeParentsOf(Builder $query, array $paths): Builder
     {
         return $this->whereRaw(sprintf(
-            '%s @> array[%s]::ltree[]',
+            "%s @> array['%s']::ltree[]",
             $this->getLtreePathColumn(),
-            "'" . implode("', '", $paths) . "'"
+            implode("', '", $paths)
         ));
     }
 
