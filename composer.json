@@ -40,5 +40,8 @@
         "Umbrellio\\LTree\\Providers\\LTreeServiceProvider"
       ]
     }
+  },
+  "suggest": {
+    "umbrellio/laravel-ltree-extensions": "Resolved problems with registering LTree::type in Doctrine."
   }
 }
