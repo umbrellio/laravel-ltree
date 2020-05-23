@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Umbrellio\LTree\Tests;
+namespace Umbrellio\LTree\tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

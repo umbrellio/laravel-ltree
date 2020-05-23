@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
 
@@ -20,6 +19,8 @@ use Umbrellio\LTree\Types\LTreeType;
  * @method static Builder|LTreeModelInterface ancestorsOf($model, bool $reverse = true)
  * @method static Builder|LTreeModelInterface parentsOf(array $paths)
  * @method static Builder|LTreeModelInterface withoutSelf(int $id)
+ * @method static Builder|LTreeModelInterface ancestorByLevel(int $level = 1, ?string $path = null)
+ * @mixin Model
  */
 trait LTreeModelTrait
 {
@@ -68,6 +69,7 @@ trait LTreeModelTrait
         return self::descendantsOf($this)->withoutSelf($this->getKey())->find($id) !== null;
     }
 
+
     public function scopeParentsOf(Builder $query, array $paths): Builder
     {
         return $this->whereRaw(sprintf(
@@ -82,20 +84,22 @@ trait LTreeModelTrait
         return $query->whereNull($this->getLtreeParentColumn());
     }
 
-    public function scopeDescendantsOf(Builder $query, $model, bool $reverse = true): Builder
+
+    public function scopeDescendantsOf(Builder $query, LTreeModelInterface $model, bool $reverse = true): Builder
     {
         return $query->whereRaw(sprintf(
             "({$this->getLtreePathColumn()} <@ text2ltree('%s')) = %s",
-            LTreeHelper::pathAsString($model->getLtreePath()),
+            $model->getLtreePath(LTreeModelInterface::AS_STRING),
             $reverse ? 'true' : 'false'
         ));
     }
 
-    public function scopeAncestorsOf(Builder $query, $model, bool $reverse = true): Builder
+
+    public function scopeAncestorsOf(Builder $query, LTreeModelInterface $model, bool $reverse = true): Builder
     {
         return $query->whereRaw(sprintf(
             "({$this->getLtreePathColumn()} @> text2ltree('%s')) = %s",
-            LTreeHelper::pathAsString($model->getLtreePath()),
+            $model->getLtreePath(LTreeModelInterface::AS_STRING),
             $reverse ? 'true' : 'false'
         ));
     }
@@ -115,11 +119,6 @@ trait LTreeModelTrait
         return ['deleted_at'];
     }
 
-    public function renderAsLtree($value, $pad_string = LTreeHelper::PAD_STRING, $pad_type = LTreeHelper::PAD_TYPE)
-    {
-        return LTreeHelper::renderAsLTree($value, $this->getLtreeLevel(), $pad_string, $pad_type);
-    }
-
     public function getAncestorByLevel(int $level = 1)
     {
         return static::ancestorByLevel($level)->first();
@@ -129,7 +128,7 @@ trait LTreeModelTrait
     {
         return $query->whereRaw(sprintf(
             "({$this->getLtreePathColumn()} @> text2ltree('%s')) and nlevel({$this->getLtreePathColumn()}) = %d",
-            $path ?: LTreeHelper::pathAsString($this->getLtreePath()),
+            $path ?: $this->getLtreePath(LTreeModelInterface::AS_STRING),
             $level
         ));
     }

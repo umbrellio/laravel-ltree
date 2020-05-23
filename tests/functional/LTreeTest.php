@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Umbrellio\LTree\Tests\Functional;
+namespace Umbrellio\LTree\tests\functional;
 
 use Generator;
 use Illuminate\Database\Eloquent\Collection as CollectionBase;
@@ -17,10 +17,13 @@ use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Interfaces\LTreeServiceInterface;
 use Umbrellio\LTree\Services\LTreeService;
-use Umbrellio\LTree\Tests\FunctionalTestCase;
+use Umbrellio\LTree\tests\_data\Models\CategorySomeStub;
+use Umbrellio\LTree\tests\_data\Models\CategoryStub;
+use Umbrellio\LTree\tests\_data\Models\ProductStub;
+use Umbrellio\LTree\tests\FunctionalTestCase;
 use Umbrellio\LTree\Traits\LTreeModelTrait;
 
-class LtreeTest extends FunctionalTestCase
+class LTreeTest extends FunctionalTestCase
 {
     use RefreshDatabase;
 
@@ -88,7 +91,7 @@ class LtreeTest extends FunctionalTestCase
         $child->refresh();
         $parent->refresh();
         $this->assertSame(1, $parent->ltreeChildrens->count());
-        $this->assertSame($child->id, $parent->ltreeChildrens->first()->id);
+        $this->assertSame($child->getKey(), $parent->ltreeChildrens->first()->getKey());
     }
 
     /**
@@ -102,8 +105,7 @@ class LtreeTest extends FunctionalTestCase
         $this->assertSame(0, $parent::descendantsOf($parent)->withoutSelf(1)->count());
         /** @var LTreeModelTrait $child */
         $child = $this->createTreeNode($this->getTreeNodes()[2]);
-        $this->assertSame('... 1.2', $child->renderAsLtree($child->getLtreePath(LTreeModelInterface::AS_STRING)));
-        $this->assertSame($child->getLtreeParentId(), $parent->id);
+        $this->assertSame($child->getLtreeParentId(), $parent->getKey());
     }
 
     /**
@@ -154,7 +156,7 @@ class LtreeTest extends FunctionalTestCase
         $nodes[1]->delete();
         $nodes[1]->refresh();
         $this->ltreeService->dropDescendants($nodes[1]);
-        $this->assertFalse($nodes[1]::whereKey($nodes[1]->id)->exists());
+        $this->assertFalse($nodes[1]::whereKey($nodes[1]->getKey())->exists());
     }
 
     /**
@@ -162,7 +164,7 @@ class LtreeTest extends FunctionalTestCase
      */
     public function ancestors(): void
     {
-        $this->assertCount(0, LTreeHelper::getAncestors(new CollectionBase()));
+        $this->assertCount(0, $this->getLTreeHelper()->getAncestors(new CollectionBase()));
         $nodes = $this->createTreeNodes($this->getTreeNodes());
         $this->assertSame(3, $nodes[1]::ancestorsOf($nodes[6])->get()->count());
         $this->assertTrue($nodes[2]->isParentOf(5));
@@ -170,10 +172,10 @@ class LtreeTest extends FunctionalTestCase
         $collection = new CollectionBase();
         $collection->put(5, $nodes[5]);
         $collection->put(12, $nodes[12]);
-        $filterNodes = LTreeHelper::getAncestors($collection);
+        $filterNodes = $this->getLTreeHelper()->getAncestors($collection);
         $this->assertSame(5, $filterNodes->count());
         $this->assertSame([1, 2, 5, 11, 12], $filterNodes->map(function (LTreeModelInterface $model) {
-            return $model->id;
+            return $model->getKey();
         })->toArray());
     }
 
@@ -243,16 +245,16 @@ class LtreeTest extends FunctionalTestCase
 
         $find = ProductStub::first();
         $this->assertFalse(array_key_exists('category_tree', $find->toArray()));
-        $this->assertSame($level1, optional($find->categoryTree->get(0))->id);
-        $this->assertSame($level2, optional($find->categoryTree->get(1))->id);
-        $this->assertSame($level3, optional($find->categoryTree->get(2))->id);
+        $this->assertSame($level1, optional($find->categoryTree->get(0))->getKey());
+        $this->assertSame($level2, optional($find->categoryTree->get(1))->getKey());
+        $this->assertSame($level3, optional($find->categoryTree->get(2))->getKey());
 
         $find = ProductStub::with('categoryTree')->first();
         $this->assertTrue(array_key_exists('category_tree', $find->toArray()));
         $this->assertSame($count, $find->categoryTree->count());
-        $this->assertSame($level1, optional($find->categoryTree->get(0))->id);
-        $this->assertSame($level2, optional($find->categoryTree->get(1))->id);
-        $this->assertSame($level3, optional($find->categoryTree->get(2))->id);
+        $this->assertSame($level1, optional($find->categoryTree->get(0))->getKey());
+        $this->assertSame($level2, optional($find->categoryTree->get(1))->getKey());
+        $this->assertSame($level3, optional($find->categoryTree->get(2))->getKey());
     }
 
     /**
@@ -263,7 +265,7 @@ class LtreeTest extends FunctionalTestCase
         $rootSome = $this->getCategorySome();
         $rootSome->save();
 
-        $childSome = $this->getCategorySome(['parent_id' => $rootSome->id]);
+        $childSome = $this->getCategorySome(['parent_id' => $rootSome->getKey()]);
         $childSome->save();
 
         $this->expectException(InvalidTraitInjectionClass::class);
@@ -280,11 +282,47 @@ class LtreeTest extends FunctionalTestCase
         $descendants = $parent::descendantsOf($parent)->withoutSelf(1);
         $this->assertGreaterThan(0, $descendants->count());
         $descendants->each(static function ($descendant) use ($parent) {
-            $descendant->getAncestorByLevel($parent->id);
+            $descendant->getAncestorByLevel($parent->getKey());
         });
 
-        $this->assertSame($tree[5]->getAncestorByLevel(2)->id, $tree[2]->id);
-        $this->assertSame($tree[8]->getAncestorByLevel(3)->id, $tree[6]->id);
+        $this->assertSame($tree[5]->getAncestorByLevel(2)->getKey(), $tree[2]->getKey());
+        $this->assertSame($tree[8]->getAncestorByLevel(3)->getKey(), $tree[6]->getKey());
+    }
+
+    public function provideLevels(): Generator
+    {
+        yield 'root' => [
+            'data' => [
+                'path' => '1',
+            ],
+            'level' => 1,
+        ];
+        yield 'second-level' => [
+            'data' => [
+                'path' => '1.2',
+            ],
+            'level' => 2,
+        ];
+        yield 'third-level' => [
+            'data' => [
+                'path' => '1.2.3',
+            ],
+            'level' => 3,
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideLevels
+     */
+    public function getLtreeLevel(array $data, int $level): void
+    {
+        $this->assertSame($level, $this->getModel($data)->getLtreeLevel());
+    }
+
+    private function getLTreeHelper(): LTreeHelper
+    {
+        return app()->make(LTreeHelper::class);
     }
 
     private function initLTreeService()
@@ -293,7 +331,7 @@ class LtreeTest extends FunctionalTestCase
         Schema::create('categories', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('parent_id')->nullable();
-            $table->ltree('path')->nullable();
+            $table->addColumn('ltree', 'path')->nullable();
             $table->index('parent_id');
             $table->timestamps(6);
             $table->softDeletes();
@@ -377,7 +415,7 @@ class LtreeTest extends FunctionalTestCase
         /** @var LTreeModelInterface $model */
         $model = $this->getModel();
         return $this->ltreeFactory($scenario, [
-            'id' => $id,
+            $model->getKeyName() => $id,
             $model->getLtreePathColumn() => $path,
             $model->getLtreeParentColumn() => $parent_id,
         ]);
