@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Umbrellio\LTree\Tests\Functional;
+namespace Umbrellio\LTree\tests\_data\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;

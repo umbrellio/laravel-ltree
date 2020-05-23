@@ -39,8 +39,8 @@ interface LTreeModelInterface
     public function ltreeChildrens(): HasMany;
 
     // scopes
-    public function scopeDescendantsOf(Builder $query, $model, bool $reverse = true): Builder;
-    public function scopeAncestorsOf(Builder $query, $model, bool $reverse = true): Builder;
+    public function scopeDescendantsOf(Builder $query, self $model, bool $reverse = true): Builder;
+    public function scopeAncestorsOf(Builder $query, self $model, bool $reverse = true): Builder;
     public function scopeWithoutSelf(Builder $query, int $id): Builder;
     public function scopeAncestorByLevel(Builder $query, int $level = 1, ?string $path = null): Builder;
 }

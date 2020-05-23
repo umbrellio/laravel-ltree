@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Umbrellio\LTree\Tests;
+namespace Umbrellio\LTree\tests\unit;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Generator;
+use Umbrellio\LTree\tests\TestCase;
 use Umbrellio\LTree\Types\LTreeType;
 
 class LTreeTypeTest extends TestCase

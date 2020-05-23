@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Helpers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -12,22 +13,11 @@ use Umbrellio\LTree\Types\LTreeType;
 
 class LTreeHelper
 {
-    public const PAD_STRING = '... ';
-    public const PAD_TYPE = STR_PAD_LEFT;
-
-    public static function renderAsLTree($value, $level = 1, $pad_string = self::PAD_STRING, $pad_type = self::PAD_TYPE)
+    /**
+     * @param LTreeModelInterface|Model $model
+     */
+    public function buildPath(LTreeModelInterface $model): void
     {
-        return str_pad(
-            $value,
-            strlen($value) + strlen($pad_string) * (($level < 1 ? 1 : $level) - 1),
-            $pad_string,
-            $pad_type
-        );
-    }
-
-    public static function buildPath(LTreeModelInterface $model): void
-    {
-        /** @var Model|LTreeModelInterface $model */
         $pathValue = [];
         if ($model->getLtreeParentId()) {
             $parent = $model->ltreeParent;
@@ -45,15 +35,16 @@ class LTreeHelper
         $model->refresh();
     }
 
-    public static function moveNode(
-        LTreeModelInterface $model,
-        ?LTreeModelInterface $to = null,
-        array $proxyColumns = []
-    ): void {
+    /**
+     * @param LTreeModelInterface|Model $model
+     * @param LTreeModelInterface|Model|null $to
+     */
+    public function moveNode(LTreeModelInterface $model, ?LTreeModelInterface $to = null, array $columns = []): void
+    {
         $pathName = $model->getLtreePathColumn();
         $oldPath = $model->getLtreePath(LTreeModelInterface::AS_STRING);
         $newPath = $to ? $to->getLtreePath(LTreeModelInterface::AS_STRING) : '';
-        $expressions = static::wrapExpressions($proxyColumns);
+        $expressions = static::wrapExpressions($columns);
         $expressions[] = sprintf(
             "\"%2\$s\" = (text2ltree('%1\$s') || subpath(\"%2\$s\", (nlevel(text2ltree('%3\$s')) - 1)))",
             $newPath,
@@ -70,12 +61,15 @@ class LTreeHelper
         $model->refresh();
     }
 
-    public static function dropDescendants(LTreeModelInterface $model, array $proxyColumns = []): void
+    /**
+     * @param LTreeModelInterface|Model $model
+     */
+    public function dropDescendants(LTreeModelInterface $model, array $columns = []): void
     {
         $sql = sprintf(
             "UPDATE %s SET %s WHERE (%s <@ text2ltree('%s')) = true",
             $model->getTable(),
-            implode(', ', static::wrapExpressions($proxyColumns)),
+            implode(', ', static::wrapExpressions($columns)),
             $model->getLtreePathColumn(),
             $model->getLtreePath(LTreeModelInterface::AS_STRING)
         );
@@ -83,19 +77,12 @@ class LTreeHelper
         $model->refresh();
     }
 
-    public static function pathAsString($path): string
-    {
-        if (is_array($path)) {
-            $path = implode(LTreeType::TYPE_SEPARATE, $path);
-        }
-        return $path;
-    }
-
-    public static function getAncestors(Collection $collection): Collection
+    public function getAncestors(Collection $collection): Collection
     {
         if ($collection->count() === 0) {
             return new Collection();
         }
+        /** @var LTreeModelInterface|Model|Builder $first */
         $first = $collection->first();
         $paths = $collection->pluck($first->getLtreePathColumn())->map(function ($item) {
             return "'${item}'";
@@ -104,7 +91,7 @@ class LTreeHelper
         return $first::where($first->getLtreePathColumn(), '@>', DB::raw("array[${paths}]::ltree[]"))->get();
     }
 
-    protected static function wrapExpressions(array $columns): array
+    private function wrapExpressions(array $columns): array
     {
         $expressions = [];
         foreach ($columns as $column => $value) {

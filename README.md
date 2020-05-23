@@ -14,17 +14,13 @@ php composer.phar require umbrellio/laravel-ltree
 
 ## How to use
 
-1. Register LTreeServiceProvider in your app (config/app.php):
+1. Implement your Eloquent\Model from LTreeModelInterface.
 
-`Umbrellio\LTree\LTreeServiceProvider::class`
-
-2. Implement your Eloquent\Model from LTreeModelInterface.
-
-3. Use LTreeModelTrait in your Model for extenting functionality
+2. Use LTreeModelTrait in your Model for extenting functionality
  - getLtreeProxyDeleteColumns
  - getLtreeProxyUpdateColumns
 
-4. Use LTreeService for build path:
+3. Use LTreeService for build path:
   - create: createPath(LTreeModelInterface $model)
   - update: updatePath(LTreeModelInterface $model)
   - delete: dropDescendants(LTreeModelInterface $model)
