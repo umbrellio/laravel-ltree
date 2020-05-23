@@ -289,6 +289,37 @@ class LTreeTest extends FunctionalTestCase
         $this->assertSame($tree[8]->getAncestorByLevel(3)->getKey(), $tree[6]->getKey());
     }
 
+    public function provideLevels(): Generator
+    {
+        yield 'root' => [
+            'data' => [
+                'path' => '1',
+            ],
+            'level' => 1,
+        ];
+        yield 'second-level' => [
+            'data' => [
+                'path' => '1.2',
+            ],
+            'level' => 2,
+        ];
+        yield 'third-level' => [
+            'data' => [
+                'path' => '1.2.3',
+            ],
+            'level' => 3,
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideLevels
+     */
+    public function getLtreeLevel(array $data, int $level): void
+    {
+        $this->assertSame($level, $this->getModel($data)->getLtreeLevel());
+    }
+
     private function getLTreeHelper(): LTreeHelper
     {
         return app()->make(LTreeHelper::class);
@@ -334,37 +365,6 @@ class LTreeTest extends FunctionalTestCase
     private function getNodeWithoutPath(): array
     {
         return [1, null, null];
-    }
-
-    public function provideLevels(): Generator
-    {
-        yield 'root' => [
-            'data' => [
-                'path' => '1'
-            ],
-            'level' => 1,
-        ];
-        yield 'second-level' => [
-            'data' => [
-                'path' => '1.2'
-            ],
-            'level' => 2,
-        ];
-        yield 'third-level' => [
-            'data' => [
-                'path' => '1.2.3'
-            ],
-            'level' => 3,
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider provideLevels
-     */
-    public function getLtreeLevel(array $data, int $level): void
-    {
-        $this->assertSame($level, $this->getModel($data)->getLtreeLevel());
     }
 
     private function getTreeNodes(): array

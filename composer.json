@@ -1,7 +1,7 @@
 {
   "name": "umbrellio/laravel-ltree",
   "type": "library",
-  "description": "Postgres SQL Extension LTree for ancestry and nested",
+  "description": "Extension LTree (Postgres) for Laravel",
   "minimum-stability": "stable",
   "authors": [
     {
