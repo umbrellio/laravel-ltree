@@ -37,7 +37,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Umbrellio\\LTree\\LTreeServiceProvider"
+        "Umbrellio\\LTree\\Providers\\LTreeServiceProvider"
       ]
     }
   }
