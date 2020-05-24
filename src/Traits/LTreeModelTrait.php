@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
 
@@ -24,6 +25,11 @@ use Umbrellio\LTree\Types\LTreeType;
  */
 trait LTreeModelTrait
 {
+    public function newCollection(array $models = []): LTreeCollection
+    {
+        return new LTreeCollection($models);
+    }
+
     public function getLtreeParentColumn(): string
     {
         return 'parent_id';
@@ -69,10 +75,9 @@ trait LTreeModelTrait
         return self::descendantsOf($this)->withoutSelf($this->getKey())->find($id) !== null;
     }
 
-
     public function scopeParentsOf(Builder $query, array $paths): Builder
     {
-        return $this->whereRaw(sprintf(
+        return $query->whereRaw(sprintf(
             "%s @> array['%s']::ltree[]",
             $this->getLtreePathColumn(),
             implode("', '", $paths)

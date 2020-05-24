@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "410563cd1cd0f4a5bc1231e0c80b88c8",
+    "content-hash": "3d89b491ff2d3bc0ce8819c48f8be95b",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -508,6 +508,62 @@
                 "validator"
             ],
             "time": "2020-02-13T22:36:52+00:00"
+        },
+        {
+            "name": "hemp/presenter",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/davidhemphill/presenter.git",
+                "reference": "99e3c2571961ce76820e200a778a8376d065214a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/davidhemphill/presenter/zipball/99e3c2571961ce76820e200a778a8376d065214a",
+                "reference": "99e3c2571961ce76820e200a778a8376d065214a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^5.7|^6.0|^7.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "orchestra/database": "3.8.*",
+                "orchestra/testbench": "3.8.*",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "project",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hemp\\Presenter\\PresenterServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hemp\\Presenter\\": "src"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Hemphill",
+                    "email": "davidlee.hemphill@gmail.com"
+                }
+            ],
+            "description": "Easy Model Presenters in Laravel",
+            "keywords": [
+                "framework",
+                "laravel"
+            ],
+            "time": "2020-03-03T18:13:20+00:00"
         },
         {
             "name": "laravel/framework",
@@ -2838,6 +2894,97 @@
             "description": "CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline styles. This is very useful when you're sending emails.",
             "homepage": "https://github.com/tijsverkoyen/CssToInlineStyles",
             "time": "2019-10-24T08:53:34+00:00"
+        },
+        {
+            "name": "umbrellio/laravel-common-objects",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/umbrellio/laravel-common-objects.git",
+                "reference": "f03be08830c23ea3694324792691e20cf30ebd19"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/umbrellio/laravel-common-objects/zipball/f03be08830c23ea3694324792691e20cf30ebd19",
+                "reference": "f03be08830c23ea3694324792691e20cf30ebd19",
+                "shasum": ""
+            },
+            "require": {
+                "hemp/presenter": "^2.0",
+                "laravel/framework": "^5.8|^6.0|^7.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.5",
+                "php-coveralls/php-coveralls": "^2.1",
+                "umbrellio/code-style-php": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Umbrellio\\Common\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Korben Dallas",
+                    "email": "pvsaintpe@umbrellio.biz"
+                }
+            ],
+            "description": "Common objects for extending base Laravel functionality.",
+            "time": "2020-05-24T20:48:29+00:00"
+        },
+        {
+            "name": "umbrellio/laravel-pg-extensions",
+            "version": "4.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/umbrellio/laravel-pg-extensions.git",
+                "reference": "966034067ae70eae4925c4bbee41268955f575b6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/966034067ae70eae4925c4bbee41268955f575b6",
+                "reference": "966034067ae70eae4925c4bbee41268955f575b6",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^2.9",
+                "laravel/framework": "^5.8|^6.0|^7.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "codeception/codeception": "^3.0",
+                "orchestra/testbench": "^3.5",
+                "php-coveralls/php-coveralls": "^2.1",
+                "umbrellio/code-style-php": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Umbrellio\\Postgres\\UmbrellioPostgresProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Umbrellio\\Postgres\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Vitaliy Lazeev",
+                    "email": "vetal@umbrellio.biz"
+                }
+            ],
+            "description": "Extensions for Postgres Laravel",
+            "time": "2020-03-17T10:12:07+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
