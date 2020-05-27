@@ -23,11 +23,7 @@ class LTreeType extends Type
             return null;
         }
 
-        return collect(explode(static::TYPE_SEPARATE, (string) $value))
-            ->map(static function ($value) {
-                return (int) $value;
-            })
-            ->toArray();
+        return collect(explode(static::TYPE_SEPARATE, (string) $value))->toArray();
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string

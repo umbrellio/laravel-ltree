@@ -10,7 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
+use Umbrellio\LTree\Traits\LTreeModelTrait;
 
+/**
+ * @property Model|LTreeModelInterface $related
+ */
 class BelongsToTree extends Relation
 {
     protected $throughRelationName;
@@ -34,10 +38,13 @@ class BelongsToTree extends Relation
     public function addConstraints(): void
     {
         if (static::$constraints) {
+            /** @var LTreeModelInterface|Model $relation */
             $relation = $this->parent->{$this->throughRelationName};
 
             if ($relation) {
-                $this->query = $relation->newQuery()->ancestorsOf($relation)->orderBy('path');
+                /** @var LTreeModelTrait|Builder $query */
+                $query = $relation->newQuery();
+                $this->query = $query->ancestorsOf($relation)->orderBy($relation->getLtreePathColumn());
             }
         }
     }
@@ -68,7 +75,7 @@ class BelongsToTree extends Relation
             }
         );
 
-        $this->query->orderBy('path');
+        $this->query->orderBy($this->related->getLtreePathColumn());
 
         $this->query->selectRaw(sprintf('%s.*, %s.%s as relation_id', $alias, $table, $this->ownerKey));
     }

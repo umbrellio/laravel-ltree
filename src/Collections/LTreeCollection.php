@@ -20,7 +20,7 @@ class LTreeCollection extends Collection
 
         $builder = new LTreeBuilder(
             $model->getLtreePathColumn(),
-            $model->getKeyName(),
+            $model->getLtreeKeyColumn(),
             $model->getLtreeParentColumn()
         );
 

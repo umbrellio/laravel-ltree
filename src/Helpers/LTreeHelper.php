@@ -24,14 +24,14 @@ class LTreeHelper
             $parent = $model->ltreeParent;
             $pathValue = array_merge($pathValue, $parent->getLtreePath());
         }
-        $pathValue[] = $model->getKey();
+        $pathValue[] = $model->getLtreeKey();
         DB::statement(sprintf(
             "UPDATE %s SET %s = text2ltree('%s') WHERE %s = %s",
             $model->getTable(),
             $model->getLtreePathColumn(),
             implode(LTreeType::TYPE_SEPARATE, $pathValue),
-            $model->getKeyName(),
-            $model->getKey()
+            $model->getLtreeKeyColumn(),
+            $model->getLtreeKey()
         ));
         $model->refresh();
     }

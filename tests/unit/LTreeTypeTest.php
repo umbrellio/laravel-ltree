@@ -53,8 +53,8 @@ class LTreeTypeTest extends TestCase
     public function provideDatabaseValues(): Generator
     {
         yield [null, null];
-        yield ['1.2.3', [1, 2, 3]];
-        yield [1, [1]];
+        yield ['1.2.3', ['1', '2', '3']];
+        yield ['1', ['1']];
     }
 
     /**
