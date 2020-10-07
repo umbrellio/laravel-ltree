@@ -14,15 +14,18 @@ php composer.phar require umbrellio/laravel-ltree
 
 ## How to use
 
-If you have problems in migration with Postgres `ltree` type, also you can register second provider:
-`Umbrellio\LTree\Providers\LTreeGrammarProvider::class`
-
-Implement your Eloquent\Model from LTreeModelInterface.
+Implement your `Eloquent\Model` from `LTreeModelInterface`.
 
 Use LTreeService for build path:
 1. when create model: `createPath(LTreeModelInterface $model)`
 2. when update model: `updatePath(LTreeModelInterface $model)` for update path for model and children
 3. when delete model: `dropDescendants(LTreeModelInterface $model)` for delete children models
+
+The `get()` method returns `LTreeCollection`, instead of the usual `Eloquent\Collection`.
+
+`LTreeCollection` has a `toTree()` method that converts a flat collection to a tree.
+
+`LTreeResourceCollection` & `LTreeResource`, which take `LTreeCollection` as an argument, will also be useful.
 
 ## Authors
 

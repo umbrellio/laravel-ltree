@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
@@ -22,6 +23,8 @@ use Umbrellio\LTree\Types\LTreeType;
  * @method static Builder|LTreeModelInterface withoutSelf(int $id)
  * @method static Builder|LTreeModelInterface ancestorByLevel(int $level = 1, ?string $path = null)
  * @mixin Model
+ * @mixin SoftDeletes
+ * @const string DELETED_AT
  */
 trait LTreeModelTrait
 {
@@ -89,7 +92,6 @@ trait LTreeModelTrait
         return $query->whereNull($this->getLtreeParentColumn());
     }
 
-
     public function scopeDescendantsOf(Builder $query, LTreeModelInterface $model, bool $reverse = true): Builder
     {
         return $query->whereRaw(sprintf(
@@ -98,7 +100,6 @@ trait LTreeModelTrait
             $reverse ? 'true' : 'false'
         ));
     }
-
 
     public function scopeAncestorsOf(Builder $query, LTreeModelInterface $model, bool $reverse = true): Builder
     {
@@ -116,12 +117,12 @@ trait LTreeModelTrait
 
     public function getLtreeProxyUpdateColumns(): array
     {
-        return ['updated_at'];
+        return [$this->getUpdatedAtColumn()];
     }
 
     public function getLtreeProxyDeleteColumns(): array
     {
-        return ['deleted_at'];
+        return [$this->getDeletedAtColumn()];
     }
 
     public function getAncestorByLevel(int $level = 1)

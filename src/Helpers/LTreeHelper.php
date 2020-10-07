@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
 
@@ -16,7 +17,7 @@ class LTreeHelper
     /**
      * @param LTreeModelInterface|Model $model
      */
-    public function buildPath(LTreeModelInterface $model): void
+    public function buildPath($model): void
     {
         $pathValue = [];
         if ($model->getLtreeParentId()) {
@@ -39,7 +40,7 @@ class LTreeHelper
      * @param LTreeModelInterface|Model $model
      * @param LTreeModelInterface|Model|null $to
      */
-    public function moveNode(LTreeModelInterface $model, ?LTreeModelInterface $to = null, array $columns = []): void
+    public function moveNode($model, $to = null, array $columns = []): void
     {
         $pathName = $model->getLtreePathColumn();
         $oldPath = $model->getLtreePath(LTreeModelInterface::AS_STRING);
@@ -64,7 +65,7 @@ class LTreeHelper
     /**
      * @param LTreeModelInterface|Model $model
      */
-    public function dropDescendants(LTreeModelInterface $model, array $columns = []): void
+    public function dropDescendants($model, array $columns = []): void
     {
         $sql = sprintf(
             "UPDATE %s SET %s WHERE (%s <@ text2ltree('%s')) = true",
@@ -77,10 +78,10 @@ class LTreeHelper
         $model->refresh();
     }
 
-    public function getAncestors(Collection $collection): Collection
+    public function getAncestors(Collection $collection): LTreeCollection
     {
         if ($collection->count() === 0) {
-            return new Collection();
+            return new LTreeCollection();
         }
         /** @var LTreeModelInterface|Model|Builder $first */
         $first = $collection->first();
