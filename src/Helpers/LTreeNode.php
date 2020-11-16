@@ -62,9 +62,12 @@ class LTreeNode extends AbstractPresenter
         }, $this->getChildren()->count());
     }
 
-    public function findInTree(int $id): ?self
+    /**
+     * @param int|string $id
+     */
+    public function findInTree($id): ?self
     {
-        if (!$this->isRoot() && $this->model->getKey() === $id) {
+        if (!$this->isRoot() && $this->model->getLtreeKey() === $id) {
             return $this;
         }
         foreach ($this->getChildren() as $child) {

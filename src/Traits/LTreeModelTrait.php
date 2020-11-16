@@ -5,23 +5,15 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
 
 /**
- * @property LTreeModelInterface|Model|BelongsTo $ltreeParent
- * @property LTreeModelInterface[]|Model[]|Collection|HasMany $ltreeChildrens
- * @method static Builder|LTreeModelInterface descendantsOf($model, bool $reverse = true)
- * @method static Builder|LTreeModelInterface ancestorsOf($model, bool $reverse = true)
- * @method static Builder|LTreeModelInterface parentsOf(array $paths)
- * @method static Builder|LTreeModelInterface withoutSelf(int $id)
- * @method static Builder|LTreeModelInterface ancestorByLevel(int $level = 1, ?string $path = null)
  * @mixin Model
+ * @mixin SoftDeletes
  */
 trait LTreeModelTrait
 {
@@ -30,20 +22,35 @@ trait LTreeModelTrait
         return new LTreeCollection($models);
     }
 
+    public function getLtreeKeyColumn(): string
+    {
+        return LTreeModelInterface::LTREE_KEY_COLUMN;
+    }
+
     public function getLtreeParentColumn(): string
     {
-        return 'parent_id';
+        return LTreeModelInterface::LTREE_PARENT_COLUMN;
     }
 
     public function getLtreePathColumn(): string
     {
-        return 'path';
+        return LTreeModelInterface::LTREE_PATH_COLUMN;
     }
 
-    public function getLtreeParentId(): ?int
+    /**
+     * @return int|string
+     */
+    public function getLtreeKey()
     {
-        $value = $this->getAttribute($this->getLtreeParentColumn());
-        return $value ? (int) $value : null;
+        return $this->getAttribute($this->getLtreeKeyColumn());
+    }
+
+    /**
+     * @return int|string|null
+     */
+    public function getLtreeParentId()
+    {
+        return $this->getAttribute($this->getLtreeParentColumn()) ?: null;
     }
 
     public function getLtreePath($mode = LTreeModelInterface::AS_ARRAY)
@@ -60,19 +67,21 @@ trait LTreeModelTrait
         return is_array($path = $this->getLtreePath()) ? count($path) : 1;
     }
 
-    public function ltreeParent(): BelongsTo
+    public function ltreeParent()
     {
         return $this->belongsTo(static::class, $this->getLtreeParentColumn());
     }
 
-    public function ltreeChildrens(): HasMany
+    public function ltreeChildrens()
     {
         return $this->hasMany(static::class, $this->getLtreeParentColumn());
     }
 
-    public function isParentOf(int $id): bool
+    public function isParentOf($id): bool
     {
-        return self::descendantsOf($this)->withoutSelf($this->getKey())->find($id) !== null;
+        return self::descendantsOf($this)
+            ->withoutSelf($this->getLtreeKey())
+            ->where($this->getLtreeKeyColumn(), '=', $id) !== null;
     }
 
     public function scopeParentsOf(Builder $query, array $paths): Builder
@@ -109,9 +118,9 @@ trait LTreeModelTrait
         ));
     }
 
-    public function scopeWithoutSelf(Builder $query, int $id): Builder
+    public function scopeWithoutSelf(Builder $query, $id): Builder
     {
-        return $query->whereRaw(sprintf('id <> %s', $id));
+        return $query->whereRaw(sprintf('%s <> %s', $this->getLtreeKeyColumn(), $id));
     }
 
     public function getLtreeProxyUpdateColumns(): array

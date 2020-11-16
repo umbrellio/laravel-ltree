@@ -55,7 +55,10 @@ class LTreeBuilder
         return [$id, $parentId];
     }
 
-    private function getNode(?int $id): LTreeNode
+    /**
+     * @param string|int $id
+     */
+    private function getNode($id): LTreeNode
     {
         if ($id === null) {
             return $this->root;
