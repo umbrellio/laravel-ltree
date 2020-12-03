@@ -76,7 +76,5 @@ class LTreeCollection extends Collection
         foreach ($parents as $item) {
             $this->add($item);
         }
-
-        $this->sortBy($model->getKeyName());
     }
 }
