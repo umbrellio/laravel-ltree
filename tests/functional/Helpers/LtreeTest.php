@@ -6,6 +6,7 @@ namespace Umbrellio\LTree\tests\functional\Helpers;
 
 use Generator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Exceptions\LTreeReflectionException;
@@ -13,6 +14,7 @@ use Umbrellio\LTree\Exceptions\LTreeUndefinedNodeException;
 use Umbrellio\LTree\Helpers\LTreeNode;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\tests\_data\Models\CategoryStub;
+use Umbrellio\LTree\tests\_data\Models\CategoryStubResourceCollection;
 use Umbrellio\LTree\tests\_data\Traits\HasLTreeTables;
 use Umbrellio\LTree\tests\FunctionalTestCase;
 use Umbrellio\LTree\Traits\LTreeModelTrait;
@@ -167,6 +169,34 @@ class LtreeTest extends FunctionalTestCase
                 ->toArray(),
             $expected
         );
+    }
+
+    /**
+     * @test
+     */
+    public function resources(): void
+    {
+        $this->initLTreeCategories();
+        $resource = new CategoryStubResourceCollection(CategoryStub::query()->whereKey(7)->get()->makeConsistent());
+        $this->assertSame($resource->toArray(new Request()), [
+            [
+                'id' => 1,
+                'path' => '1',
+                'children' => [
+                    [
+                        'id' => 3,
+                        'path' => '1.3',
+                        'children' => [
+                            [
+                                'id' => 7,
+                                'path' => '1.3.7',
+                                'children' => [],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
     }
 
     /**

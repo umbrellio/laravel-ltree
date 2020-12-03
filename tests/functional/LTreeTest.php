@@ -77,7 +77,7 @@ class LTreeTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function childrens(): void
+    public function children(): void
     {
         $parent = $this->createTreeNode($this->getTreeNodes()[1]);
         $this->assertNull($parent->getLtreeParentId());
@@ -88,6 +88,23 @@ class LTreeTest extends FunctionalTestCase
         $parent->refresh();
         $this->assertSame(1, $parent->ltreeChildren->count());
         $this->assertSame($child->getKey(), $parent->ltreeChildren->first()->getKey());
+    }
+
+    /**
+     * @test
+     * @deprecated Will be removed since 6.0
+     */
+    public function childrens(): void
+    {
+        $parent = $this->createTreeNode($this->getTreeNodes()[1]);
+        $this->assertNull($parent->getLtreeParentId());
+        $this->assertTrue($parent::descendantsOf($parent)->exists());
+        $this->assertSame(0, $parent::descendantsOf($parent)->withoutSelf(1)->count());
+        $child = $this->createTreeNode($this->getTreeNodes()[2]);
+        $child->refresh();
+        $parent->refresh();
+        $this->assertSame(1, $parent->ltreeChildrens->count());
+        $this->assertSame($child->getKey(), $parent->ltreeChildrens->first()->getKey());
     }
 
     /**
