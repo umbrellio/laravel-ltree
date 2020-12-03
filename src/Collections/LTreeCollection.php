@@ -16,6 +16,9 @@ use Umbrellio\LTree\Interfaces\LTreeModelInterface;
  */
 class LTreeCollection extends Collection
 {
+    /**
+     * This method loads the missing nodes, making the tree branches correct.
+     */
     public function makeConsistent(): self
     {
         if ($this->isEmpty()) {
