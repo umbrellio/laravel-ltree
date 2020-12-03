@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Umbrellio\LTree\tests\Helpers;
+namespace Umbrellio\LTree\tests\functional\Helpers;
 
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
@@ -11,12 +11,21 @@ use Umbrellio\LTree\Exceptions\LTreeReflectionException;
 use Umbrellio\LTree\Exceptions\LTreeUndefinedNodeException;
 use Umbrellio\LTree\Helpers\LTreeNode;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
-use Umbrellio\LTree\tests\TestCase;
+use Umbrellio\LTree\tests\_data\Traits\HasLTreeTables;
+use Umbrellio\LTree\tests\FunctionalTestCase;
 use Umbrellio\LTree\Traits\LTreeModelTrait;
 
-class LtreeTest extends TestCase
+class LtreeTest extends FunctionalTestCase
 {
+    use HasLTreeTables;
+
     private $hits;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->initLTreeService();
+    }
 
     /**
      * @test

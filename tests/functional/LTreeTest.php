@@ -7,25 +7,21 @@ namespace Umbrellio\LTree\tests\functional;
 use Generator;
 use Illuminate\Database\Eloquent\Collection as CollectionBase;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
-use Umbrellio\LTree\Interfaces\LTreeServiceInterface;
 use Umbrellio\LTree\Services\LTreeService;
 use Umbrellio\LTree\tests\_data\Models\CategorySomeStub;
 use Umbrellio\LTree\tests\_data\Models\CategoryStub;
 use Umbrellio\LTree\tests\_data\Models\ProductStub;
+use Umbrellio\LTree\tests\_data\Traits\HasLTreeTables;
 use Umbrellio\LTree\tests\FunctionalTestCase;
 use Umbrellio\LTree\Traits\LTreeModelTrait;
 
 class LTreeTest extends FunctionalTestCase
 {
-    use RefreshDatabase;
+    use HasLTreeTables;
 
     /**
      * @var LTreeService
@@ -90,8 +86,8 @@ class LTreeTest extends FunctionalTestCase
         $child = $this->createTreeNode($this->getTreeNodes()[2]);
         $child->refresh();
         $parent->refresh();
-        $this->assertSame(1, $parent->ltreeChildrens->count());
-        $this->assertSame($child->getKey(), $parent->ltreeChildrens->first()->getKey());
+        $this->assertSame(1, $parent->ltreeChildren->count());
+        $this->assertSame($child->getKey(), $parent->ltreeChildren->first()->getKey());
     }
 
     /**
@@ -323,30 +319,6 @@ class LTreeTest extends FunctionalTestCase
     private function getLTreeHelper(): LTreeHelper
     {
         return app()->make(LTreeHelper::class);
-    }
-
-    private function initLTreeService()
-    {
-        DB::statement('CREATE EXTENSION IF NOT EXISTS LTREE');
-        Schema::create('categories', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('parent_id')->nullable();
-            $table->addColumn('ltree', 'path')->nullable();
-            $table->index('parent_id');
-            $table->timestamps(6);
-            $table->softDeletes();
-            $table->tinyInteger('is_deleted')->unsigned()->default(1);
-            $table->unique('path');
-        });
-        Schema::create('products', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('category_id')->nullable();
-            $table->timestamps(6);
-
-            $table->foreign('category_id')->on('categories')->references('id');
-        });
-        DB::statement("COMMENT ON COLUMN categories.path IS '(DC2Type:ltree)'");
-        $this->ltreeService = app()->make(LTreeServiceInterface::class);
     }
 
     /**

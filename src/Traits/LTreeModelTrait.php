@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,14 +14,8 @@ use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
 
 /**
- * @property LTreeModelInterface|Model|BelongsTo $ltreeParent
- * @property LTreeModelInterface[]|Model[]|Collection|HasMany $ltreeChildrens
- * @method static Builder|LTreeModelInterface descendantsOf($model, bool $reverse = true)
- * @method static Builder|LTreeModelInterface ancestorsOf($model, bool $reverse = true)
- * @method static Builder|LTreeModelInterface parentsOf(array $paths)
- * @method static Builder|LTreeModelInterface withoutSelf(int $id)
- * @method static Builder|LTreeModelInterface ancestorByLevel(int $level = 1, ?string $path = null)
  * @mixin Model
+ * @mixin LTreeModelInterface
  * @mixin SoftDeletes
  * @const string DELETED_AT
  */
@@ -68,7 +61,15 @@ trait LTreeModelTrait
         return $this->belongsTo(static::class, $this->getLtreeParentColumn());
     }
 
+    /**
+     * @deprecated Will be removed since 5.*
+     */
     public function ltreeChildrens(): HasMany
+    {
+        return $this->hasMany(static::class, $this->getLtreeParentColumn());
+    }
+
+    public function ltreeChildren(): HasMany
     {
         return $this->hasMany(static::class, $this->getLtreeParentColumn());
     }
@@ -112,7 +113,7 @@ trait LTreeModelTrait
 
     public function scopeWithoutSelf(Builder $query, int $id): Builder
     {
-        return $query->whereRaw(sprintf('id <> %s', $id));
+        return $query->whereRaw(sprintf('%s <> %s', $this->getKeyName(), $id));
     }
 
     public function getLtreeProxyUpdateColumns(): array

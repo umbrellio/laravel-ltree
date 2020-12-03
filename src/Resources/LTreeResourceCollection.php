@@ -9,10 +9,7 @@ use Umbrellio\LTree\Collections\LTreeCollection;
 
 abstract class LTreeResourceCollection extends ResourceCollection
 {
-    /**
-     * @param LTreeCollection $resource
-     */
-    public function __construct($resource, $sort = null, bool $usingSort = true)
+    public function __construct(LTreeCollection $resource, $sort = null, bool $usingSort = true)
     {
         $collection = $resource->toTree($usingSort);
 

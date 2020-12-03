@@ -37,7 +37,10 @@ class BelongsToTree extends Relation
             $relation = $this->parent->{$this->throughRelationName};
 
             if ($relation) {
-                $this->query = $relation->newQuery()->ancestorsOf($relation)->orderBy('path');
+                $this->query = $relation
+                    ->newQuery()
+                    ->ancestorsOf($relation)
+                    ->orderBy($this->getLTreeRelated()->getLtreePathColumn());
             }
         }
     }
@@ -53,22 +56,16 @@ class BelongsToTree extends Relation
         $table = $this->getModel()->getTable();
         $alias = sprintf('%s_depends', $table);
 
+        $related = $this->getLTreeRelated();
+
         $this->query->join(
             sprintf('%s as %s', $table, $alias),
-            function (JoinClause $query) use ($alias, $table) {
-                /** @var LTreeModelInterface $related */
-                $related = $this->parent->{$this->throughRelationName}()->related;
-
-                $query->whereRaw(sprintf(
-                    '%1$s.%2$s @> %3$s.%2$s',
-                    $alias,
-                    $related->getLtreePathColumn(),
-                    $table
-                ));
+            function (JoinClause $query) use ($alias, $table, $related) {
+                $query->whereRaw(sprintf('%1$s.%2$s @> %3$s.%2$s', $alias, $related->getLtreePathColumn(), $table));
             }
         );
 
-        $this->query->orderBy('path');
+        $this->query->orderBy($related->getLtreePathColumn());
 
         $this->query->selectRaw(sprintf('%s.*, %s.%s as relation_id', $alias, $table, $this->ownerKey));
     }
@@ -128,6 +125,11 @@ class BelongsToTree extends Relation
         sort($keys);
 
         return array_values(array_unique($keys));
+    }
+
+    private function getLTreeRelated(): LTreeModelInterface
+    {
+        return $this->parent->{$this->throughRelationName}()->related;
     }
 
     private function getParentKey()
