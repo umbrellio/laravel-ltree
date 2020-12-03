@@ -58,7 +58,7 @@ class LTreeCollection extends Collection
 
         return $paths
             ->unique()
-            ->diff($this->pluck($model->getKeyName())->isEmpty())
+            ->diff($this->pluck($model->getKeyName()))
             ->isEmpty();
     }
 
