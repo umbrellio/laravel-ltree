@@ -24,9 +24,11 @@ class LTreeCollection extends Collection
 
         $model = $this->first();
 
-        if (!$this->isConsistency($model)) {
-            return new self($this->reloadWithAncestors($model));
+        if ($this->isConsistency($model)) {
+            return $this;
         }
+
+        $this->appendAncestors($model);
 
         return $this;
     }
@@ -48,19 +50,19 @@ class LTreeCollection extends Collection
 
     private function isConsistency(LTreeModelInterface $model): bool
     {
-        $paths = new Collection();
+        $paths = collect();
 
         foreach ($this->items as $item) {
             $paths = $paths->merge($item->getLtreePath());
         }
 
-        return $this
-            ->pluck($model->getKeyName())
-            ->diff($paths->unique())
+        return $paths
+            ->unique()
+            ->diff($this->pluck($model->getKeyName())->isEmpty())
             ->isEmpty();
     }
 
-    private function reloadWithAncestors(LTreeModelInterface $model): array
+    private function appendAncestors(LTreeModelInterface $model): void
     {
         $paths = $this->pluck($model->getLtreePathColumn())->toArray();
         $ids = $this->pluck($model->getKeyName())->toArray();
@@ -70,12 +72,10 @@ class LTreeCollection extends Collection
             ->whereKeyNot($ids)
             ->get();
 
-        $items = $this->items;
-
         foreach ($parents as $item) {
-            $items[$item->getKey()] = $item;
+            $this->add($item);
         }
 
-        return $items;
+        $this->sortBy($model->getKeyName());
     }
 }
