@@ -23,7 +23,7 @@ trait HasLTreeTables
         Schema::create('categories', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('parent_id')->nullable();
-            $table->addColumn('ltree', 'path')->nullable();
+            $table->ltree('path')->nullable();
             $table->index('parent_id');
             $table->timestamps(6);
             $table->softDeletes();
