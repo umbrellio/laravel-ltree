@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Helpers;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
 
@@ -74,20 +71,6 @@ class LTreeHelper
         );
         DB::statement($sql);
         $model->refresh();
-    }
-
-    public function getAncestors(Collection $collection): LTreeCollection
-    {
-        if ($collection->count() === 0) {
-            return new LTreeCollection();
-        }
-        /** @var LTreeModelInterface|Model|Builder $first */
-        $first = $collection->first();
-        $paths = $collection->pluck($first->getLtreePathColumn())->map(function ($item) {
-            return "'${item}'";
-        });
-        $paths = $paths->implode(', ');
-        return $first::where($first->getLtreePathColumn(), '@>', DB::raw("array[${paths}]::ltree[]"))->get();
     }
 
     private function wrapExpressions(array $columns): array

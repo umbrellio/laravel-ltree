@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\tests\functional;
 
 use Generator;
-use Illuminate\Database\Eloquent\Collection as CollectionBase;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
@@ -160,19 +159,9 @@ class LTreeTest extends FunctionalTestCase
      */
     public function ancestors(): void
     {
-        $this->assertCount(0, $this->getLTreeHelper()->getAncestors(new CollectionBase()));
         $nodes = $this->createTreeNodes($this->getTreeNodes());
         $this->assertSame(3, $nodes[1]::ancestorsOf($nodes[6])->get()->count());
         $this->assertTrue($nodes[2]->isParentOf(5));
-
-        $collection = new CollectionBase();
-        $collection->put(5, $nodes[5]);
-        $collection->put(12, $nodes[12]);
-        $filterNodes = $this->getLTreeHelper()->getAncestors($collection);
-        $this->assertSame(5, $filterNodes->count());
-        $this->assertSame([1, 2, 5, 11, 12], $filterNodes->map(function (LTreeModelInterface $model) {
-            return $model->getKey();
-        })->toArray());
     }
 
     public function providePaths(): Generator
