@@ -24,11 +24,9 @@ class LTreeCollection extends Collection
 
         $model = $this->first();
 
-        if ($this->isConsistency($model)) {
-            return $this;
+        if ($this->hasMissingNodes($model)) {
+            $this->appendAncestors($model);
         }
-
-        $this->appendAncestors($model);
 
         return $this;
     }
@@ -48,7 +46,7 @@ class LTreeCollection extends Collection
         return $builder->build($collection ?? $this, $usingSort);
     }
 
-    private function isConsistency(LTreeModelInterface $model): bool
+    private function hasMissingNodes(LTreeModelInterface $model): bool
     {
         $paths = collect();
 
@@ -59,7 +57,7 @@ class LTreeCollection extends Collection
         return $paths
             ->unique()
             ->diff($this->pluck($model->getKeyName()))
-            ->isEmpty();
+            ->isNotEmpty();
     }
 
     private function appendAncestors(LTreeModelInterface $model): void
