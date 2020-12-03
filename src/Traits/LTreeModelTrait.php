@@ -61,14 +61,6 @@ trait LTreeModelTrait
         return $this->belongsTo(static::class, $this->getLtreeParentColumn());
     }
 
-    /**
-     * @deprecated Will be removed since 5.*
-     */
-    public function ltreeChildrens(): HasMany
-    {
-        return $this->hasMany(static::class, $this->getLtreeParentColumn());
-    }
-
     public function ltreeChildren(): HasMany
     {
         return $this->hasMany(static::class, $this->getLtreeParentColumn());

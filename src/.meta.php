@@ -23,14 +23,13 @@ namespace Illuminate\Database\Eloquent {
     }
 
     /**
-     * @method Builder descendantsOf(LTreeModelInterface|\Umbrellio\LTree\Interfaces\Model $model, bool $reverse = true)
+     * @method Builder descendantsOf(LTreeModelInterface|\Umbrellio\LTree\Interfaces\self $model, bool $reverse = true)
      * @method Builder ancestorsOf(LTreeModelInterface|Model $model, bool $reverse = true)
      * @method Builder parentsOf(array $paths)
      * @method Builder withoutSelf(int $id)
      * @method Builder ancestorByLevel(int $level = 1, ?string $path = null)
      *
      * @property LTreeCollection $ltreeChildren
-     * @property LTreeCollection $ltreeChildrens
      * @property LTreeModelInterface $ltreeParent
      */
     class Model

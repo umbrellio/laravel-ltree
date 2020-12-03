@@ -177,8 +177,24 @@ class LtreeTest extends FunctionalTestCase
     public function resources(): void
     {
         $this->initLTreeCategories();
-        $resource = new CategoryStubResourceCollection(CategoryStub::query()->whereKey(7)->get()->makeConsistent());
+        $resource = new CategoryStubResourceCollection(
+            CategoryStub::query()->whereKey([7, 12])->get()->makeConsistent(),
+            [
+                'id' => 'desc',
+            ]
+        );
         $this->assertSame($resource->toArray(new Request()), [
+            [
+                'id' => 11,
+                'path' => '11',
+                'children' => [
+                    [
+                        'id' => 12,
+                        'path' => '11.12',
+                        'children' => [],
+                    ],
+                ],
+            ],
             [
                 'id' => 1,
                 'path' => '1',

@@ -11,9 +11,4 @@ interface HasLTreeRelations
 {
     public function ltreeParent(): BelongsTo;
     public function ltreeChildren(): HasMany;
-
-    /**
-     * @deprecated Will be removed from version 5.0
-     */
-    public function ltreeChildrens(): HasMany;
 }
