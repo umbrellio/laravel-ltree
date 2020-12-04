@@ -44,13 +44,13 @@ matrix:
   allow_failures:
     - php: "7.4"
   include:
-    - stage: "Test for PHP7.2 with Postgres11"
+    - stage: Test
       php: "7.2"
       env: DB=pgsql POSTGRESQL_VERSION=11.0
       sudo: required
       services:
         - docker
-    - stage: "Test for PHP7.3 with Postgres10"
+    - stage: Test
       php: "7.3"
       env: DB=pgsql POSTGRESQL_VERSION=10.0 COVERAGE=yes
       sudo: required
@@ -60,7 +60,7 @@ matrix:
         postgresql: "9.6"
       before_script:
         - bash ./tests/travis/install-postgres-10.sh
-    - stage: "Test for PHP7.3 with Postgres11"
+    - stage: Test
       php: "7.3"
       env: DB=pgsql DOCKER_POSTGRES=yes POSTGRESQL_VERSION=11.0 COVERAGE=yes
       sudo: required
@@ -71,7 +71,7 @@ matrix:
         postgresql: "9.6"
       before_script:
         - bash ./tests/travis/install-postgres-11.sh
-    - stage: "Test for PHP7.5 with Postgres11"
+    - stage: Test
       php: "7.4"
       env: DB=pgsql DOCKER_POSTGRES=yes POSTGRESQL_VERSION=11.0
       sudo: required
