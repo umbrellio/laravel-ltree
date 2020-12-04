@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\tests\_data\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Resources\LTreeResource;
 
 /**
- * @property Model $resource
+ * @property LTreeModelInterface $resource
  */
 class CategoryStubResource extends LTreeResource
 {
@@ -16,6 +16,7 @@ class CategoryStubResource extends LTreeResource
     {
         return [
             'id' => $this->resource->getKey(),
+            'path' => $this->resource->getLtreePath(LTreeModelInterface::AS_STRING),
         ];
     }
 }

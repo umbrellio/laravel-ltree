@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Umbrellio\LTree\tests\unit;
+namespace Umbrellio\LTree\tests\functional\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Generator;
-use Umbrellio\LTree\tests\TestCase;
+use Umbrellio\LTree\tests\FunctionalTestCase;
 use Umbrellio\LTree\Types\LTreeType;
 
-class LTreeTypeTest extends TestCase
+class LTreeTypeTest extends FunctionalTestCase
 {
     /**
      * @var AbstractPlatform
