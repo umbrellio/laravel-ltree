@@ -43,9 +43,9 @@ class LTreeHelper
         $oldPath = $model->getLtreePath(LTreeModelInterface::AS_STRING);
         $newPath = $to ? $to->getLtreePath(LTreeModelInterface::AS_STRING) : '';
         $expressions = static::wrapExpressions($columns);
-        $expressions[] = <<<EXPR
-            "${pathName}" = (text2ltree('${newPath}') || subpath("${pathName}", (nlevel(text2ltree('${oldPath}')) - 1)))
-        EXPR;
+        $expressions[] = "
+            \"${pathName}\" = (text2ltree('${newPath}') || subpath(\"${pathName}\", (nlevel(text2ltree('${oldPath}')) - 1)))
+        ";
 
         DB::statement(sprintf(
             "UPDATE %s SET %s WHERE (%s <@ text2ltree('%s')) = true",
@@ -78,9 +78,9 @@ class LTreeHelper
         $expressions = [];
         foreach ($columns as $column => $value) {
             if (is_numeric($value)) {
-                $expressions[] = sprintf('%s = %s', $column, $value);
+                $expressions[] = sprintf('%s = %s', (string) $column, (string) $value);
             } else {
-                $expressions[] = sprintf("%s = '%s'", $column, $value);
+                $expressions[] = sprintf("%s = '%s'", (string) $column, (string) $value);
             }
         }
         return $expressions;
