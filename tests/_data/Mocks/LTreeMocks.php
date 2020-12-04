@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Umbrellio\LTree\tests\unit\_data\Mocks;
+namespace Umbrellio\LTree\tests\_data\Mocks;
 
 use Mockery;
 use Umbrellio\LTree\Interfaces\LTreeServiceInterface;

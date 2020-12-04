@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Helpers;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
 
@@ -46,12 +43,10 @@ class LTreeHelper
         $oldPath = $model->getLtreePath(LTreeModelInterface::AS_STRING);
         $newPath = $to ? $to->getLtreePath(LTreeModelInterface::AS_STRING) : '';
         $expressions = static::wrapExpressions($columns);
-        $expressions[] = sprintf(
-            "\"%2\$s\" = (text2ltree('%1\$s') || subpath(\"%2\$s\", (nlevel(text2ltree('%3\$s')) - 1)))",
-            $newPath,
-            $pathName,
-            $oldPath
-        );
+        $expressions[] = <<<EXPR
+            "${pathName}" = (text2ltree('${newPath}') || subpath("${pathName}", (nlevel(text2ltree('${oldPath}')) - 1)))
+        EXPR;
+
         DB::statement(sprintf(
             "UPDATE %s SET %s WHERE (%s <@ text2ltree('%s')) = true",
             $model->getTable(),
@@ -76,20 +71,6 @@ class LTreeHelper
         );
         DB::statement($sql);
         $model->refresh();
-    }
-
-    public function getAncestors(Collection $collection): LTreeCollection
-    {
-        if ($collection->count() === 0) {
-            return new LTreeCollection();
-        }
-        /** @var LTreeModelInterface|Model|Builder $first */
-        $first = $collection->first();
-        $paths = $collection->pluck($first->getLtreePathColumn())->map(function ($item) {
-            return "'${item}'";
-        });
-        $paths = $paths->implode(', ');
-        return $first::where($first->getLtreePathColumn(), '@>', DB::raw("array[${paths}]::ltree[]"))->get();
     }
 
     private function wrapExpressions(array $columns): array

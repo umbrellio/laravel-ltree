@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\Helpers;
 
-use Illuminate\Support\Collection;
+use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Exceptions\LTreeReflectionException;
 use Umbrellio\LTree\Exceptions\LTreeUndefinedNodeException;
 
@@ -23,7 +23,7 @@ class LTreeBuilder
         $this->parentIdField = $parentIdField;
     }
 
-    public function build(Collection $items, bool $usingSort = true): LTreeNode
+    public function build(LTreeCollection $items, bool $usingSort = true): LTreeNode
     {
         if ($usingSort === true) {
             $items = $items->sortBy($this->pathField, SORT_STRING);
