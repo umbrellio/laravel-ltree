@@ -10,21 +10,35 @@ abstract class FunctionalTestCase extends TestCase
 {
     use RefreshDatabase;
 
-    protected function getEnvironmentSetUp($app)
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
+        $params = $this->getConnectionParams();
+
+        $app['config']->set('database.default', 'main');
+        $app['config']->set('database.connections.main', [
             'driver' => 'pgsql',
-            'host' => env('TEST_DB_HOST', 'localhost'),
-            'port' => env('TEST_DB_PORT', 5432),
-            'database' => env('TEST_DB', 'testing'),
-            'username' => env('TEST_DB_USER', 'postgres'),
-            'password' => env('TEST_DB_PASSWORD', ''),
+            'host' => $params['host'],
+            'port' => (int) $params['port'],
+            'database' => $params['database'],
+            'username' => $params['user'],
+            'password' => $params['password'],
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',
         ]);
+    }
+
+    private function getConnectionParams(): array
+    {
+        return [
+            'driver' => $GLOBALS['db_type'] ?? 'pdo_pgsql',
+            'user' => $GLOBALS['db_username'],
+            'password' => $GLOBALS['db_password'],
+            'host' => $GLOBALS['db_host'],
+            'database' => $GLOBALS['db_database'],
+            'port' => $GLOBALS['db_port'],
+        ];
     }
 }
