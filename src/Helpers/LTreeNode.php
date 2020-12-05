@@ -18,10 +18,7 @@ class LTreeNode extends AbstractPresenter
     protected $parent;
     protected $children;
 
-    /**
-     * @param LTreeModelInterface|Model|null $model
-     */
-    public function __construct(?LTreeModelInterface $model = null)
+    public function __construct(Model $model = null)
     {
         parent::__construct($model);
     }
