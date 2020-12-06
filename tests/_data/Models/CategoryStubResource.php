@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\tests\_data\Models;
 
-use Umbrellio\LTree\Interfaces\LTreeModelInterface;
+use Umbrellio\LTree\Helpers\LTreeNode;
+use Umbrellio\LTree\Interfaces\LTreeInterface;
+use Umbrellio\LTree\Interfaces\ModelInterface;
 use Umbrellio\LTree\Resources\LTreeResource;
 
 /**
- * @property LTreeModelInterface $resource
+ * @property LTreeNode $resource
  */
 class CategoryStubResource extends LTreeResource
 {
-    protected function toTreeArray($request)
+    /**
+     * @param LTreeInterface|ModelInterface $model
+     */
+    protected function toTreeArray($request, $model)
     {
         return [
-            'id' => $this->resource->getKey(),
-            'path' => $this->resource->getLtreePath(LTreeModelInterface::AS_STRING),
+            'id' => $model->getKey(),
+            'path' => $model->getLtreePath(LTreeInterface::AS_STRING),
         ];
     }
 }

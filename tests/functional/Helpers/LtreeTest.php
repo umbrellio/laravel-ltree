@@ -153,7 +153,7 @@ class LtreeTest extends FunctionalTestCase
      * @test
      * @dataProvider provideNoConstencyTree
      */
-    public function makeConsistency(array $ids, array $expected): void
+    public function loadMissingNodes(array $ids, array $expected): void
     {
         $this->initLTreeCategories();
 
@@ -161,7 +161,7 @@ class LtreeTest extends FunctionalTestCase
             CategoryStub::query()
                 ->whereKey($ids)
                 ->get()
-                ->makeConsistent()
+                ->loadMissingNodes()
                 ->sortBy(function (LTreeModelInterface $item) {
                     return $item->getKey();
                 })
@@ -178,7 +178,7 @@ class LtreeTest extends FunctionalTestCase
     {
         $this->initLTreeCategories();
         $resource = new CategoryStubResourceCollection(
-            CategoryStub::query()->whereKey([7, 12])->get()->makeConsistent(),
+            CategoryStub::query()->whereKey([7, 12])->get()->loadMissingNodes(),
             [
                 'id' => 'desc',
             ]
