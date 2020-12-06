@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\Helpers;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Umbrellio\Common\Contracts\AbstractPresenter;
-use Umbrellio\LTree\Interfaces\LTreeModelInterface;
+use Umbrellio\LTree\Collections\LTreeCollection;
+use Umbrellio\LTree\Interfaces\LTreeInterface;
+use Umbrellio\LTree\Interfaces\ModelInterface;
 
 /**
- * @property LTreeModelInterface $model
+ * @property LTreeInterface|ModelInterface $model
  */
 class LTreeNode extends AbstractPresenter
 {
     protected $parent;
     protected $children;
 
-    public function __construct(Model $model = null)
+    public function __construct($model = null)
     {
         parent::__construct($model);
     }
@@ -83,9 +84,9 @@ class LTreeNode extends AbstractPresenter
         });
     }
 
-    public function toCollection(): Collection
+    public function toCollection(): LTreeCollection
     {
-        $collection = new Collection();
+        $collection = new LTreeCollection();
         $this->each(static function (self $item) use ($collection) {
             $collection->add($item->model);
         });
@@ -94,7 +95,7 @@ class LTreeNode extends AbstractPresenter
 
     public function pathAsString()
     {
-        return $this->model ? $this->model->getLtreePath(LTreeModelInterface::AS_STRING) : null;
+        return $this->model ? $this->model->getLtreePath(LTreeInterface::AS_STRING) : null;
     }
 
     public function toTreeArray(callable $callback)

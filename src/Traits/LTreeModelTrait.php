@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
-use Umbrellio\LTree\Types\LTreeType;
 
 /**
  * @mixin Model
@@ -21,39 +20,11 @@ use Umbrellio\LTree\Types\LTreeType;
  */
 trait LTreeModelTrait
 {
+    use LTreeTrait;
+
     public function newCollection(array $models = []): LTreeCollection
     {
         return new LTreeCollection($models);
-    }
-
-    public function getLtreeParentColumn(): string
-    {
-        return 'parent_id';
-    }
-
-    public function getLtreePathColumn(): string
-    {
-        return 'path';
-    }
-
-    public function getLtreeParentId(): ?int
-    {
-        $value = $this->getAttribute($this->getLtreeParentColumn());
-        return $value ? (int) $value : null;
-    }
-
-    public function getLtreePath($mode = LTreeModelInterface::AS_ARRAY)
-    {
-        $path = $this->getAttribute($this->getLtreePathColumn());
-        if ($mode === LTreeModelInterface::AS_ARRAY) {
-            return $path !== null ? explode(LTreeType::TYPE_SEPARATE, $path) : [];
-        }
-        return (string) $path;
-    }
-
-    public function getLtreeLevel(): int
-    {
-        return is_array($path = $this->getLtreePath()) ? count($path) : 1;
     }
 
     public function ltreeParent(): BelongsTo

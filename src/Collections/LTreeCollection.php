@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Helpers\LTreeBuilder;
 use Umbrellio\LTree\Helpers\LTreeNode;
-use Umbrellio\LTree\Interfaces\LTreeModelInterface;
+use Umbrellio\LTree\Interfaces\LTreeInterface;
+use Umbrellio\LTree\Interfaces\ModelInterface;
 
 /**
- * @method LTreeModelInterface first()
- * @property LTreeModelInterface[] $items
+ * @method LTreeInterface|ModelInterface first()
+ * @property LTreeInterface[]|ModelInterface[] $items
  */
 class LTreeCollection extends Collection
 {
@@ -49,7 +50,10 @@ class LTreeCollection extends Collection
         return $builder->build($collection ?? $this, $usingSort);
     }
 
-    private function hasMissingNodes(LTreeModelInterface $model): bool
+    /**
+     * @param LTreeInterface|ModelInterface $model
+     */
+    private function hasMissingNodes($model): bool
     {
         $paths = collect();
 
@@ -63,7 +67,10 @@ class LTreeCollection extends Collection
             ->isNotEmpty();
     }
 
-    private function appendAncestors(LTreeModelInterface $model): void
+    /**
+     * @param LTreeInterface|ModelInterface $model
+     */
+    private function appendAncestors($model): void
     {
         $paths = $this->pluck($model->getLtreePathColumn())->toArray();
         $ids = $this->pluck($model->getKeyName())->toArray();
