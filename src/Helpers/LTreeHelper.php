@@ -6,13 +6,14 @@ namespace Umbrellio\LTree\Helpers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Umbrellio\LTree\Interfaces\LTreeInterface;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Types\LTreeType;
 
 class LTreeHelper
 {
     /**
-     * @param LTreeModelInterface|Model $model
+     * @param LTreeInterface|Model $model
      */
     public function buildPath($model): void
     {
@@ -34,8 +35,8 @@ class LTreeHelper
     }
 
     /**
-     * @param LTreeModelInterface|Model $model
-     * @param LTreeModelInterface|Model|null $to
+     * @param LTreeInterface|Model $model
+     * @param LTreeInterface|Model|null $to
      */
     public function moveNode($model, $to = null, array $columns = []): void
     {
@@ -58,7 +59,7 @@ class LTreeHelper
     }
 
     /**
-     * @param LTreeModelInterface|Model $model
+     * @param LTreeInterface|Model $model
      */
     public function dropDescendants($model, array $columns = []): void
     {
