@@ -18,7 +18,7 @@ final class CategoryStub extends Model implements LTreeModelInterface
 
     protected $table = 'categories';
 
-    protected $fillable = ['id', 'parent_id', 'path', 'is_deleted'];
+    protected $fillable = ['id', 'parent_id', 'path', 'is_deleted', 'name'];
 
     protected $dateFormat = 'Y-m-d H:i:s.u';
 

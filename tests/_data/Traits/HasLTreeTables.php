@@ -26,6 +26,7 @@ trait HasLTreeTables
             $table->ltree('path')->nullable();
             $table->index('parent_id');
             $table->timestamps(6);
+            $table->string('name')->nullable();
             $table->softDeletes();
             $table->tinyInteger('is_deleted')->unsigned()->default(1);
             $table->unique('path');
@@ -43,53 +44,40 @@ trait HasLTreeTables
 
     private function initLTreeCategories(): void
     {
-        $this->createTreeNodes(CategoryStub::class, $this->getTreeNodes());
+        foreach ($this->getTreeNodes() as $data) {
+            $this->createCategory([
+                'id' => $data[0],
+                'path' => $data[1],
+                'parent_id' => $data[2],
+                'name' => $data[3],
+            ]);
+        }
     }
 
     private function getTreeNodes(): array
     {
         return [
-            1 => [1, '1', null],
-            2 => [2, '1.2', 1],
-            5 => [5, '1.2.5', 2],
-            3 => [3, '1.3', 1],
-            6 => [6, '1.3.6', 3],
-            8 => [8, '1.3.6.8', 6],
-            9 => [9, '1.3.6.9', 6],
-            10 => [10, '1.3.6.10', 6],
-            7 => [7, '1.3.7', 3],
-            4 => [4, '1.4', 1],
-            11 => [11, '11', null],
-            12 => [12, '11.12', 11],
+            1 => [1, '1', null, 'Russia'],
+            2 => [2, '1.2', 1, 'Saint-Petersburg'],
+            5 => [5, '1.2.5', 2, 'Gatchina'],
+            3 => [3, '1.3', 1, 'Moscow'],
+            6 => [6, '1.3.6', 3, 'Kazan'],
+            8 => [8, '1.3.6.8', 6, 'Tver'],
+            9 => [9, '1.3.6.9', 6, 'Romanovo'],
+            10 => [10, '1.3.6.10', 6, 'Sheremetevo'],
+            7 => [7, '1.3.7', 3, 'Rublevka'],
+            4 => [4, '1.4', 1, 'Omsk'],
+            11 => [11, '11', null, 'Britain'],
+            12 => [12, '11.12', 11, 'London'],
         ];
     }
 
-    private function createTreeNodes(string $class, array $items): void
+    private function createCategory(array $attributes): LTreeModelInterface
     {
-        foreach ($items as $data) {
-            $this->createLTreeNode($class, $data[0], $data[1], $data[2]);
-        }
-    }
-
-    private function createLTreeNode(string $class, int $id, ?string $path, ?int $parent_id): void
-    {
-        $model = $this->getModel($class);
-
-        $this->ltreeFactory($class, [
-            $model->getKeyName() => $id,
-            $model->getLtreePathColumn() => $path,
-            $model->getLtreeParentColumn() => $parent_id,
-        ]);
-    }
-
-    private function getModel(string $class, array $data = []): LTreeModelInterface
-    {
-        return new $class($data);
-    }
-
-    private function ltreeFactory(string $class, array $data = []): void
-    {
-        $model = $this->getModel($class, $data);
+        $model = new CategoryStub();
+        $model->fill($attributes);
         $model->save();
+
+        return $model;
     }
 }

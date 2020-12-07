@@ -17,29 +17,13 @@ use Umbrellio\LTree\Interfaces\ModelInterface;
  */
 class LTreeCollection extends Collection
 {
-    /**
-     * This method loads the missing nodes, making the tree branches correct.
-     */
-    public function loadMissingNodes(): self
-    {
-        if ($this->isEmpty()) {
-            return $this;
-        }
-
-        $model = $this->first();
-
-        if ($this->hasMissingNodes($model)) {
-            $this->appendAncestors($model);
-        }
-
-        return $this;
-    }
-
     public function toTree(bool $usingSort = true): LTreeNode
     {
         if (!$model = $this->first()) {
             return new LTreeNode();
         }
+
+        $this->loadMissingNodes($model);
 
         $builder = new LTreeBuilder(
             $model->getLtreePathColumn(),
@@ -48,6 +32,18 @@ class LTreeCollection extends Collection
         );
 
         return $builder->build($collection ?? $this, $usingSort);
+    }
+
+    /**
+     * This method loads the missing nodes, making the tree branches correct.
+     */
+    private function loadMissingNodes($model): self
+    {
+        if ($this->hasMissingNodes($model)) {
+            $this->appendAncestors($model);
+        }
+
+        return $this;
     }
 
     /**
