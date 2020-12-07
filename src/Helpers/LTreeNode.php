@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\Helpers;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Umbrellio\Common\Contracts\AbstractPresenter;
 use Umbrellio\LTree\Collections\LTreeCollection;
@@ -12,7 +13,7 @@ use Umbrellio\LTree\Interfaces\LTreeInterface;
 use Umbrellio\LTree\Interfaces\ModelInterface;
 
 /**
- * @property LTreeInterface|ModelInterface $model
+ * @property LTreeInterface|ModelInterface|Model $model
  */
 class LTreeNode extends AbstractPresenter
 {

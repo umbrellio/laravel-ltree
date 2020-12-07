@@ -17,7 +17,6 @@ use Umbrellio\LTree\tests\_data\Models\CategoryStub;
 use Umbrellio\LTree\tests\_data\Models\CategoryStubResourceCollection;
 use Umbrellio\LTree\tests\_data\Traits\HasLTreeTables;
 use Umbrellio\LTree\tests\FunctionalTestCase;
-use Umbrellio\LTree\Traits\LTreeModelTrait;
 
 class LtreeTest extends FunctionalTestCase
 {
@@ -29,6 +28,7 @@ class LtreeTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->initLTreeService();
+        $this->initLTreeCategories();
     }
 
     /**
@@ -36,10 +36,10 @@ class LtreeTest extends FunctionalTestCase
      */
     public function collectionCanBeConvertedIntoTree()
     {
-        $tree = $this->getTree();
-        $this->assertSame(5, $tree->getChildren()->count());
+        $tree = $this->getCategories()->toTree();
+        $this->assertSame(2, $tree->getChildren()->count());
         $this->assertSame(3, $tree->getChildren()[0]->getChildren()->count());
-        $this->assertSame(1, $tree->getChildren()->find(10)->getChildren()->count());
+        $this->assertSame(1, $tree->getChildren()->find(11)->getChildren()->count());
         $this->assertSame($tree, $tree->getChildren()[0]->getParent());
     }
 
@@ -49,7 +49,7 @@ class LtreeTest extends FunctionalTestCase
     public function nodeCantHaveUnknownParent()
     {
         $this->expectException(LTreeUndefinedNodeException::class);
-        $this->getTreeWithUnknownParent();
+        $this->getCategoriesWithUnknownParent()->toTree();
     }
 
     /**
@@ -58,50 +58,61 @@ class LtreeTest extends FunctionalTestCase
     public function nodeCantBeParentToItself()
     {
         $this->expectException(LTreeReflectionException::class);
-        $this->getTreeWithSelfParentNode();
+        $this->getCategoriesWithSelfParent()->toTree();
     }
 
     /**
      * @test
      */
-    public function findSuccess()
+    public function findSuccess(): void
     {
-        $tree = $this->getTree();
-        foreach (range(1, 10) as $id) {
+        $tree = $this->getCategories()->toTree();
+        foreach (range(1, 12) as $id) {
             $node = $tree->findInTree($id);
             $this->assertNotNull($node);
             $model = $node->model;
             $this->assertSame($id, $model->id);
             $this->assertInstanceOf(Model::class, $model);
         }
-        $this->assertNotNull($tree->getChildren()->find(10)->findInTree(11));
-        $this->assertNotNull($tree->findInTree(7)->findInTree(7));
+        $this->assertNotNull($tree->getChildren()->find(11)->findInTree(12));
+        $this->assertNotNull($tree->findInTree(1)->findInTree(2));
+    }
+
+    public function provideUnknownNodes(): Generator
+    {
+        yield '-1' => [
+            'node' => -1,
+        ];
+        yield '0' => [
+            'node' => 0,
+        ];
+        yield '999' => [
+            'node' => 999,
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideUnknownNodes
+     */
+    public function findFail($node): void
+    {
+        $tree = $this->getCategories()->toTree();
+        $this->assertNull($tree->findInTree($node));
     }
 
     /**
      * @test
      */
-    public function findFail()
+    public function countDescendants(): void
     {
-        $tree = $this->getTree();
-        foreach ($this->provideUnknownNodes() as $row) {
-            list($id) = $row;
-            $this->assertNull($tree->findInTree($id));
-        }
-    }
-
-    /**
-     * @test
-     */
-    public function countDescendants()
-    {
-        $tree = $this->getTree();
-        $this->assertSame(11, $tree->countDescendants());
-        $this->assertSame(5, $tree->findInTree(1)->countDescendants());
-        $this->assertSame(2, $tree->findInTree(2)->countDescendants());
-        $this->assertSame(0, $tree->findInTree(5)->countDescendants());
-        $this->assertSame(0, $tree->findInTree(7)->countDescendants());
-        $this->assertSame(1, $tree->findInTree(10)->countDescendants());
+        $tree = $this->getCategories()->toTree();
+        $this->assertSame(12, $tree->countDescendants());
+        $this->assertSame(9, $tree->findInTree(1)->countDescendants());
+        $this->assertSame(1, $tree->findInTree(2)->countDescendants());
+        $this->assertSame(5, $tree->findInTree(3)->countDescendants());
+        $this->assertSame(3, $tree->findInTree(6)->countDescendants());
+        $this->assertSame(1, $tree->findInTree(11)->countDescendants());
     }
 
     /**
@@ -109,8 +120,9 @@ class LtreeTest extends FunctionalTestCase
      */
     public function each()
     {
-        $tree = $this->getTree();
-        $collection = $this->getCollection();
+        $tree = $this->getCategories()->toTree();
+        $tree->sortTree([]);
+        $collection = $tree->toCollection();
         $this->hits = 0;
         $tree->each(function ($item) use ($collection) {
             $key = $collection->search($item->getModel());
@@ -118,7 +130,7 @@ class LtreeTest extends FunctionalTestCase
             $collection->pull($key);
             $this->hits++;
         });
-        $this->assertSame(11, $this->hits);
+        $this->assertSame(12, $this->hits);
         $this->assertCount(0, $collection);
     }
 
@@ -128,9 +140,7 @@ class LtreeTest extends FunctionalTestCase
     public function toTreeOnEmptyCollection(): void
     {
         $collection = new LTreeCollection();
-        $tree = $collection->toTree();
-
-        $this->assertInstanceOf(LTreeNode::class, $tree);
+        $this->assertInstanceOf(LTreeNode::class, $collection->toTree());
     }
 
     public function provideNoConstencyTree(): Generator
@@ -143,10 +153,6 @@ class LtreeTest extends FunctionalTestCase
             'items' => [1, 3, 7],
             'expected' => [1, 3, 7],
         ];
-        yield 'empty' => [
-            'items' => [],
-            'expected' => [],
-        ];
     }
 
     /**
@@ -155,13 +161,12 @@ class LtreeTest extends FunctionalTestCase
      */
     public function loadMissingNodes(array $ids, array $expected): void
     {
-        $this->initLTreeCategories();
-
         $this->assertSame(
             CategoryStub::query()
                 ->whereKey($ids)
                 ->get()
-                ->loadMissingNodes()
+                ->toTree()
+                ->toCollection()
                 ->sortBy(function (LTreeModelInterface $item) {
                     return $item->getKey();
                 })
@@ -176,9 +181,8 @@ class LtreeTest extends FunctionalTestCase
      */
     public function resources(): void
     {
-        $this->initLTreeCategories();
         $resource = new CategoryStubResourceCollection(
-            CategoryStub::query()->whereKey([7, 12])->get()->loadMissingNodes(),
+            CategoryStub::query()->whereKey([7, 12])->get(),
             [
                 'id' => 'desc',
             ]
@@ -218,15 +222,15 @@ class LtreeTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function toCollection()
+    public function toCollection(): void
     {
-        $tree = $this->getTree();
+        $tree = $this->getCategories()->toTree();
 
         $this->assertSame('1', $tree->findInTree(1)->pathAsString());
 
         $collection = $tree->toCollection();
-        $this->assertCount(11, $collection);
-        for ($id = 1; $id <= 11; $id++) {
+        $this->assertCount(12, $collection);
+        for ($id = 1; $id <= 12; $id++) {
             $collection->find($id);
         }
     }
@@ -234,7 +238,7 @@ class LtreeTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function toTreeArray()
+    public function toTreeArray(): void
     {
         $formatter = static function ($item) {
             return [
@@ -242,10 +246,10 @@ class LtreeTest extends FunctionalTestCase
                 'custom' => $item->id * 10,
             ];
         };
-        $tree = $this->getTree();
+        $tree = $this->getCategories()->toTree();
         $array = $tree->toTreeArray($formatter);
         $this->assertIsArray($array);
-        $this->assertCount(5, $array);
+        $this->assertCount(2, $array);
         foreach ($array as $item) {
             $this->assertArrayHasKey('my_id', $item);
             $this->assertArrayHasKey('custom', $item);
@@ -264,112 +268,24 @@ class LtreeTest extends FunctionalTestCase
      */
     public function nodePresenter()
     {
-        $tree = $this->getTree();
+        $tree = $this->getCategories()->toTree();
         $node = $tree->findInTree(1);
         // node method
         $this->assertTrue(method_exists($node, 'getChildren'));
         $this->assertNotNull($node->getChildren());
         // model method
         $this->assertFalse(method_exists($node, 'getTable'));
-        $this->assertNotNull($node->getTable());
+        $this->assertNotNull($node->model->getTable());
     }
 
-    public function getCollection()
+    /**
+     * @test
+     */
+    public function sortFail(): void
     {
-        return $this->getLtreeModelsCollection(
-            [
-                [
-                    'id' => 1,
-                    'parent_id' => null,
-                    'path' => '1',
-                ],
-                [
-                    'id' => 2,
-                    'parent_id' => 1,
-                    'path' => '1.2',
-                ],
-                [
-                    'id' => 3,
-                    'parent_id' => 2,
-                    'path' => '1.2.3',
-                ],
-                [
-                    'id' => 4,
-                    'parent_id' => 2,
-                    'path' => '1.2.4',
-                ],
-                [
-                    'id' => 5,
-                    'parent_id' => 1,
-                    'path' => '1.5',
-                ],
-                [
-                    'id' => 6,
-                    'parent_id' => 1,
-                    'path' => '1.6',
-                ],
-                [
-                    'id' => 7,
-                    'parent_id' => null,
-                    'path' => '7',
-                ],
-                [
-                    'id' => 8,
-                    'parent_id' => null,
-                    'path' => '8',
-                ],
-                [
-                    'id' => 9,
-                    'parent_id' => null,
-                    'path' => '9',
-                ],
-                [
-                    'id' => 10,
-                    'parent_id' => null,
-                    'path' => '10',
-                ],
-                [
-                    'id' => 11,
-                    'parent_id' => 10,
-                    'path' => '10.11',
-                ],
-            ]
-        );
-    }
-
-    public function getTree(): LTreeNode
-    {
-        $collection = $this->getCollection()->shuffle();
-        return $collection->toTree();
-    }
-
-    public function getTreeWithUnknownParent(): LTreeNode
-    {
-        $collection = $this->getCollection();
-        $collection->add($this->getLtreeModel([
-            'id' => 888,
-            'parent_id' => 777,
-            'path' => '777.888',
-        ]));
-        return $collection->toTree();
-    }
-
-    public function getTreeWithSelfParentNode(): LTreeNode
-    {
-        $collection = $this->getCollection();
-        $collection->add($this->getLtreeModel([
-            'id' => 777,
-            'parent_id' => 777,
-            'path' => '777.777',
-        ]));
-        return $collection->toTree();
-    }
-
-    public function provideUnknownNodes()
-    {
-        yield [-1];
-        yield [0];
-        yield [99];
+        $tree = $this->getRandomCategories()->toTree();
+        $this->expectException(InvalidArgumentException::class);
+        $tree->sortTree(['name']);
     }
 
     /**
@@ -377,7 +293,7 @@ class LtreeTest extends FunctionalTestCase
      */
     public function sort()
     {
-        $tree = $this->getUnsortedTree()->toTree();
+        $tree = $this->getRandomCategories()->whereIn('id', [1, 2, 3, 4])->toTree();
         $tree->sortTree(['name' => 'asc']);
         $sorted = $this->getSortedTree();
         foreach ($tree->getChildren() as $key => $node) {
@@ -389,88 +305,44 @@ class LtreeTest extends FunctionalTestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function sortFail()
-    {
-        $tree = $this->getUnsortedTree()->toTree();
-        $this->expectException(InvalidArgumentException::class);
-        $tree->sortTree(['name']);
-    }
-
-    public function getUnsortedTree()
-    {
-        return $this->getLtreeModelsCollection(
-            [
-                [
-                    'id' => 1,
-                    'parent_id' => null,
-                    'path' => '1',
-                    'name' => 'Vegetables',
-                ],
-                [
-                    'id' => 5,
-                    'parent_id' => null,
-                    'path' => '5',
-                    'name' => 'Fruits',
-                ],
-                [
-                    'id' => 2,
-                    'parent_id' => 5,
-                    'path' => '5.2',
-                    'name' => 'Banana',
-                ],
-                [
-                    'id' => 3,
-                    'parent_id' => 5,
-                    'path' => '5.3',
-                    'name' => 'Orange',
-                ],
-                [
-                    'id' => 4,
-                    'parent_id' => 5,
-                    'path' => '5.4',
-                    'name' => 'Apple',
-                ],
-                [
-                    'id' => 6,
-                    'parent_id' => 5,
-                    'path' => '5.6',
-                    'name' => 'Apple',
-                ],
-            ]);
-    }
-
     public function getSortedTree()
     {
         return [
             [
-                'id' => 5,
-                'children' => [4, 6, 2, 3],
+                'id' => 1,
+                'children' => [3, 4, 2],
             ],
             [
-                'id' => 1,
+                'id' => 4,
                 'children' => [],
             ],
         ];
     }
 
-    private function getLtreeModelsCollection(array $items)
+    private function getCategoriesWithSelfParent(): LTreeCollection
     {
-        $collection = new LTreeCollection();
-        foreach ($items as $item) {
-            $collection->add($this->getLtreeModel($item));
-        }
-        return $collection;
+        $this->createCategory([
+            'id' => 13,
+            'parent_id' => 13,
+            'path' => '13.13',
+            'name' => 'Self parent',
+        ]);
+        return $this->getCategories();
     }
 
-    private function getLtreeModel($data)
+    private function getCategoriesWithUnknownParent(): LTreeCollection
     {
-        return new class($data) extends Model implements LTreeModelInterface {
-            use LTreeModelTrait;
+        CategoryStub::query()->find(11)->delete();
+        return $this->getCategories();
+    }
 
-            protected $fillable = ['id', 'path', 'parent_id', 'name'];
-        };
+    private function getCategories(): LTreeCollection
+    {
+        return CategoryStub::query()->orderBy('name')->get();
+    }
+
+    private function getRandomCategories(): LTreeCollection
+    {
+        return CategoryStub::query()->inRandomOrder()->get();
     }
 }
