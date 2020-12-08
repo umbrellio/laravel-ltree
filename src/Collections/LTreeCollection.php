@@ -17,13 +17,15 @@ use Umbrellio\LTree\Interfaces\ModelInterface;
  */
 class LTreeCollection extends Collection
 {
-    public function toTree(bool $usingSort = true): LTreeNode
+    public function toTree(bool $usingSort = true, bool $loadMissing = true): LTreeNode
     {
         if (!$model = $this->first()) {
             return new LTreeNode();
         }
 
-        $this->loadMissingNodes($model);
+        if ($loadMissing) {
+            $this->loadMissingNodes($model);
+        }
 
         $builder = new LTreeBuilder(
             $model->getLtreePathColumn(),

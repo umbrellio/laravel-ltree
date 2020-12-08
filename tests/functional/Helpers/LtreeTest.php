@@ -145,7 +145,7 @@ class LtreeTest extends FunctionalTestCase
 
     public function provideNoConstencyTree(): Generator
     {
-        yield 'non_consistent' => [
+        yield 'non_consistent_with_loading' => [
             'ids' => [7, 3, 12],
             'expected' => [1, 3, 7, 11, 12],
         ];
@@ -166,6 +166,37 @@ class LtreeTest extends FunctionalTestCase
                 ->whereKey($ids)
                 ->get()
                 ->toTree()
+                ->toCollection()
+                ->sortBy(function (LTreeModelInterface $item) {
+                    return $item->getKey();
+                })
+                ->pluck('id')
+                ->toArray(),
+            $expected
+        );
+    }
+
+    public function provideNoConstency(): Generator
+    {
+        yield 'non_consistent_without_loading' => [
+            'ids' => [7, 3, 12],
+            'expected' => [3, 7, 12],
+            'loadMissing' => false,
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideNoConstency
+     */
+    public function withoutLoadMissingNodes(array $ids, array $expected): void
+    {
+        $this->expectException(LTreeUndefinedNodeException::class);
+        $this->assertSame(
+            CategoryStub::query()
+                ->whereKey($ids)
+                ->get()
+                ->toTree(true, false)
                 ->toCollection()
                 ->sortBy(function (LTreeModelInterface $item) {
                     return $item->getKey();

@@ -13,9 +13,9 @@ abstract class LTreeResourceCollection extends ResourceCollection
     /**
      * @param LTreeCollection|Collection $resource
      */
-    public function __construct($resource, $sort = null, bool $usingSort = true)
+    public function __construct($resource, $sort = null, bool $usingSort = true, bool $loadMissing = true)
     {
-        $collection = $resource->toTree($usingSort);
+        $collection = $resource->toTree($usingSort, $loadMissing);
 
         if ($sort) {
             $collection->sortTree($sort);
