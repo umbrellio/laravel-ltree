@@ -8,7 +8,6 @@ use Generator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
-use Umbrellio\LTree\Helpers\LTreeHelper;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Services\LTreeService;
 use Umbrellio\LTree\tests\_data\Models\CategorySomeStub;
@@ -303,11 +302,6 @@ class LTreeTest extends FunctionalTestCase
     public function getLtreeLevel(array $data, int $level): void
     {
         $this->assertSame($level, $this->getModel($data)->getLtreeLevel());
-    }
-
-    private function getLTreeHelper(): LTreeHelper
-    {
-        return app()->make(LTreeHelper::class);
     }
 
     /**
