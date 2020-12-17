@@ -32,6 +32,6 @@ jobs:
           coverage: none	
       - name: Run linter
         run: |
-          - rm composer.lock
-          - composer -n update --prefer-dist
-          - vendor/bin/ecs check --config=ecs.yml . 
+          rm composer.lock
+          composer -n update --prefer-dist
+          vendor/bin/ecs check --config=ecs.yml . 
