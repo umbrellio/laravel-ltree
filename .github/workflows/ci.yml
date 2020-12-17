@@ -31,4 +31,7 @@ jobs:
           tools: pecl, composer
           coverage: none	
       - name: Run linter
-        run: rm composer.lock && composer -n update --prefer-dist && vendor/bin/ecs check --config=ecs.yml . 
+        run: |
+          - rm composer.lock
+          - composer -n update --prefer-dist
+          - vendor/bin/ecs check --config=ecs.yml . 
