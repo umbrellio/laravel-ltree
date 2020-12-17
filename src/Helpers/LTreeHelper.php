@@ -78,10 +78,15 @@ class LTreeHelper
     {
         $expressions = [];
         foreach ($columns as $column => $value) {
-            if (is_numeric($value)) {
-                $expressions[] = sprintf('%s = %s', (string) $column, (string) $value);
-            } else {
-                $expressions[] = sprintf("%s = '%s'", (string) $column, (string) $value);
+            switch (true) {
+                case $value === null:
+                    $expressions[] = sprintf('%s = null', (string) $column);
+                    break;
+                case is_string($value):
+                    $expressions[] = sprintf("%s = '%s'", (string) $column, (string) $value);
+                    break;
+                default:
+                    $expressions[] = sprintf('%s = %s', (string) $column, (string) $value);
             }
         }
         return $expressions;
