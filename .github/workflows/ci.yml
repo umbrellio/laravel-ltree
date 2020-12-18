@@ -7,7 +7,7 @@ on:
 env:	
   COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}	
   COVERAGE: '1'
-  working_directory: ./src
+  working_directory: ./
   php_extensions: 'apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip'
   key: cache-v0.1
   DATABASE_URL: 'postgres://postgres:postgres@localhost:5432/application?charset=UTF-8'
