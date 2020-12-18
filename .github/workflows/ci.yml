@@ -165,7 +165,7 @@ jobs:
           PGPASSWORD: postgres
           PGPORT: ${{ jobs.unit_testing.services.postgres.ports[5432] }} # get randomly assigned published port
           PGDATABASE: postgres
-          run: |
+        run: |
             pg_isready
             psql
       - name: 'Creating Database'
