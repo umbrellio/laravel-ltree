@@ -34,3 +34,4 @@ jobs:
         run: |
           rm composer.lock
           composer -n update
+          vendor/bin/ecs check --config=ecs.yml .
