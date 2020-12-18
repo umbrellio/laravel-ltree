@@ -73,8 +73,6 @@ jobs:
       - name: 'Linting PHP source files'
         run: 'vendor/bin/ecs check --config=ecs.yml .'
   unit_testing:
-    env:
-      RAILS_ENV: test
     strategy:
       fail-fast: false
       matrix:
@@ -96,16 +94,18 @@ jobs:
     services:
       postgres:
         image: postgres:${{ matrix.postgres }}
-        alias: postgres
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: testing
           POSTGRES_HOST: postgres
-          POSTGRES_PORT: ${{ job.unit_testing.services.postgres.ports[5432] }}
         ports:
-          - 5432/tcp
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+          - 5432/5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -157,6 +157,11 @@ jobs:
         run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
         working-directory: '${{env.working_directory}}'
       - name: 'Run Unit Tests with PHPUnit'
+        env:
+          # use localhost for the host here because we have specified a container for the job.
+          # If we were running the job on the VM this would be postgres
+          DB_HOST: localhost
+          DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         run: './vendor/bin/phpunit --configuration phpunit.github.xml --coverage-clover build/logs/clover.xml'
         working-directory: '${{env.working_directory}}'
       - name: 'Send Code Coverage Report'
