@@ -92,7 +92,7 @@ jobs:
     needs:
       - lint
     services:
-      postgres11:
+      postgres:
         image: 'postgres:11'
         env:
           POSTGRES_USER: postgres
@@ -151,7 +151,7 @@ jobs:
         run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
         working-directory: '${{env.working_directory}}'
       - name: 'Create PostgreSQL Database'
-        run: 'sudo docker exec -ti postgres11 psql postgres -U postgres -c "CREATE DATABASE testing"'
+        run: 'sudo docker exec -ti postgres psql postgres -U postgres -c "CREATE DATABASE testing"'
         working-directory: '${{env.working_directory}}'
       - name: 'Run Unit Tests with PHPUnit'
         run: './vendor/bin/phpunit --configuration phpunit.github.xml --coverage-clover build/logs/clover.xml'
