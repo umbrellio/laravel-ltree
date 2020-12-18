@@ -98,7 +98,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: testing
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: localhost
         ports:
           - 5432/tcp
         options: >-
@@ -113,10 +113,8 @@ jobs:
           fetch-depth: 1
       - name: apt-get
         run: |
-          'sudo bash -c "echo deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main >> /etc/apt/sources.list.d/pgdg.list"'
-          'wget --quiet -O - http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | sudo apt-key add -'
-          'sudo apt-get update'
-          'sudo apt-get -y install libpq-dev postgresql-${{ matrix.postgres }} postgresql-client-${{ matrix.postgres }}'
+          sudo apt-get update -y
+          sudo apt-get install -y libpq-dev postgresql-client
       - name: 'Setup cache environment'
         id: cache-env
         uses: shivammathur/cache-extensions@v1
