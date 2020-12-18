@@ -18,7 +18,7 @@ jobs:
           - '7.3'	
       fail-fast: false	
     env:	
-      PHP_CS_FIXER_FUTURE_MODE: '1'	
+      PHP_CS_FIXER_FUTURE_MODE: '0'
     steps:	
       - name: Checkout	
         uses: actions/checkout@v2	
