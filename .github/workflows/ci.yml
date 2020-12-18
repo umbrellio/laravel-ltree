@@ -2,9 +2,7 @@ name: CI
 
 on:	
   push:
-    branches:
-      - master
-  pull_request: null
+  pull_request:
 
 env:	
   COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}	
