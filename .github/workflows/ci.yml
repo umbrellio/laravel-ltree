@@ -76,3 +76,88 @@ jobs:
         working-directory: '${{env.working_directory}}'
       - name: 'Linting PHP source files'
         run: 'vendor/bin/ecs check --config=ecs.yml .'
+  unit_testing:
+    strategy:
+      fail-fast: false
+      matrix:
+        operating_system:
+          - ubuntu-latest
+        php_versions:
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+    runs-on: '${{ matrix.operating_system }}'
+    name: 'Unit Testing / PHP ${{ matrix.php_versions }} @ ${{ matrix.operating_system }}'
+    needs:
+      - lint
+    services:
+      postgres11:
+        image: 'postgres:11'
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD:
+          POSTGRES_DB: testing
+        ports:
+          - '5432:5432'
+        options: '--health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5'
+      redis:
+        image: redis
+        ports:
+          - '6379:6379'
+        options: '--health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: 'Setup cache environment'
+        id: cache-env
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: '${{ matrix.php_versions }}'
+          extensions: '${{ env.php_extensions }}'
+          key: '${{ env.key }}'
+      - name: 'Cache extensions'
+        uses: actions/cache@v1
+        with:
+          path: '${{ steps.cache-env.outputs.dir }}'
+          key: '${{ steps.cache-env.outputs.key }}'
+          restore-keys: '${{ steps.cache-env.outputs.key }}'
+      - name: 'Setup PHP'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '${{ matrix.php_versions }}'
+          extensions: '${{ env.php_extensions }}'
+          ini-values: 'date.timezone=UTC, upload_max_filesize=20M, post_max_size=20M, memory_limit=512M, short_open_tag=Off'
+          coverage: xdebug
+          tools: 'cs2pr, php-cs-fixer, phpstan, phpunit'
+      - name: 'Setup problem matchers for PHP (aka PHP error logs)'
+        run: 'echo "::add-matcher::${{ runner.tool_cache }}/php.json"'
+      - name: 'Setup problem matchers for PHPUnit'
+        run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
+      - name: 'Get Composer cache directory'
+        id: composer-cache
+        run: 'echo "::set-output name=dir::$(composer config cache-files-dir)"'
+        working-directory: '${{env.working_directory}}'
+      - name: 'Cache dependencies'
+        uses: actions/cache@v1
+        with:
+          path: '${{ steps.composer-cache.outputs.dir }}'
+          key: '${{ runner.os }}-composer-${{ hashFiles(''**/composer.lock'') }}'
+          restore-keys: '${{ runner.os }}-composer-'
+      - name: 'Validate composer.json and composer.lock'
+        run: 'composer validate'
+        working-directory: '${{env.working_directory}}'
+      - name: 'Install PHP dependencies with Composer'
+        run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
+        working-directory: '${{env.working_directory}}'
+      - name: 'Create PostgreSQL Database'
+        run: 'sudo docker exec -ti postgres11 psql postgres -U postgres -c "CREATE DATABASE testing"'
+        working-directory: '${{env.working_directory}}'
+      - name: 'Run Unit Tests with PHPUnit'
+        run: './vendor/bin/phpunit --configuration phpunit.github.xml --coverage-clover build/logs/clover.xml'
+        working-directory: '${{env.working_directory}}'
+      - name: 'Send Code Coverage Report'
+        continue-on-error: true
+        timeout-minutes: 1
+        run: './vendor/bin/php-coveralls -v'
+        working-directory: '${{env.working_directory}}'
