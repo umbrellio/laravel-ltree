@@ -140,19 +140,19 @@ jobs:
         env:
           # use localhost for the host here because we are running the job on the VM.
           # If we were running the job on in a container this would be postgres
-          POSTGRES_HOST: postgres${{ matrix.postgres }}
+          POSTGRES_HOST: postgres
           POSTGRES_PORT: 5432
         run: |
           set -ex
           echo "Preparing Postgres ${{ matrix.postgres }}"
           sudo service postgresql stop || true
-          sudo docker run -d --name postgres${{ matrix.postgres }} -p 5432:5432 postgres:${{ matrix.postgres }}
+          sudo docker run -d --name postgres -p 5432:5432 postgres:${{ matrix.postgres }}
           echo "Postgres ${{ matrix.postgres }} ready"
       - name: 'Run Unit Tests with PHPUnit'
         env:
           # use localhost for the host here because we are running the job on the VM.
           # If we were running the job on in a container this would be postgres
-          POSTGRES_HOST: postgres${{ matrix.postgres }}
+          POSTGRES_HOST: postgres
           POSTGRES_PORT: 5432
         run: './vendor/bin/phpunit --configuration phpunit.github.xml --coverage-clover build/logs/clover.xml'
         working-directory: '${{env.working_directory}}'
