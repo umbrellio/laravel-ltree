@@ -10,7 +10,7 @@ env:
   working_directory: ./
   php_extensions: 'apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip'
   key: cache-v0.1
-  DATABASE_URL: 'postgres://testing@localhost:5432/testing?charset=UTF-8'
+  DATABASE_URL: 'postgres://postgres@postgres@localhost:5432/testing?charset=UTF-8'
 
 jobs:	
   lint:
@@ -64,9 +64,6 @@ jobs:
           path: '${{ steps.composer-cache.outputs.dir }}'
           key: '${{ runner.os }}-composer-${{ hashFiles(''**/composer.lock'') }}'
           restore-keys: '${{ runner.os }}-composer-'
-      - name: 'Identicate'
-        run: 'ls -lah'
-        working-directory: '${{env.working_directory}}'
       - name: 'Validate composer.json and composer.lock'
         run: 'composer validate'
         working-directory: '${{env.working_directory}}'
@@ -83,21 +80,17 @@ jobs:
       matrix:
         operating_system:
           - 'ubuntu-latest'
-        ruby:
-          - '2.6'
         postgres:
           # - '10'
-          # - '11'
+          - '11'
           # - '12'
-        redis:
-          - '4.x'
         php_versions:
           # - '7.2'
           # - '7.3'
           - '7.4'
           # - '8.0'
     runs-on: '${{ matrix.operating_system }}'
-    name: 'Unit Testing / PHP ${{ matrix.php_versions }} @ ${{ matrix.operating_system }}'
+    name: 'Unit Testing / PHP ${{ matrix.php_versions }} @ ${{ matrix.operating_system }} with Postgres ${{ matrix.postgres }}'
     needs:
       - lint
     services:
@@ -119,10 +112,6 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y libpq-dev postgresql-client
-      - name: Set up Redis
-        uses: shogo82148/actions-setup-redis@v1
-        with:
-          redis-version: '5.x'
       - name: 'Setup cache environment'
         id: cache-env
         uses: shivammathur/cache-extensions@v1
