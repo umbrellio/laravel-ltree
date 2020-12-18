@@ -136,6 +136,19 @@ jobs:
       - name: 'Install PHP dependencies with Composer'
         run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
         working-directory: '${{env.working_directory}}'
+      - name: 'Test connection to Postgres:${{ matrix.postgres }}'
+        env:
+          # use localhost for the host here because we are running the job on the VM.
+          # If we were running the job on in a container this would be postgres
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
+        run: |
+          set -ex
+          echo "Preparing Postgres ${{ matrix.postgres }}"
+          sudo service postgresql stop || true
+          sudo docker run -d --name postgres${{ matrix.postgres }} -p 5432:5432 postgres:${{ matrix.postgres }}
+          sudo docker exec -i postgres${{ matrix.postgres }} bash <<< 'until pg_isready -U postgres > /dev/null 2>&1 ; do sleep 1; done'
+          echo "Postgres ${{ matrix.postgres }} ready"
       - name: 'Run Unit Tests with PHPUnit'
         env:
           # use localhost for the host here because we are running the job on the VM.
