@@ -15,18 +15,18 @@ env:
 
 jobs:	
   lint:
-    runs-on: '${{ matrix.operating-system }}'
+    runs-on: '${{ matrix.operating_system }}'
     timeout-minutes: 20	
     strategy:	
       matrix:
-        operating-system:
+        operating_system:
           - ubuntu-latest
         php_versions:
           - '7.4'
       fail-fast: false
     env:	
       PHP_CS_FIXER_FUTURE_MODE: '0'
-    name: 'Lint / PHP ${{ matrix.php-versions }} @ ${{ matrix.operating-system }}'
+    name: 'Lint / PHP ${{ matrix.php_versions }} @ ${{ matrix.operating_system }}'
     steps:	
       - name: 'Checkout'
         uses: actions/checkout@v2
@@ -34,7 +34,7 @@ jobs:
         id: cache-env
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: '${{ matrix.php-versions }}'
+          php-version: '${{ matrix.php_versions }}'
           extensions: '${{ env.php_extensions }}'
           key: '${{ env.key }}'
       - name: 'Cache extensions'
