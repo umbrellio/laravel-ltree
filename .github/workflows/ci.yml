@@ -96,6 +96,7 @@ jobs:
     services:
       postgres:
         image: postgres:${{ matrix.postgres }}
+        alias: postgres
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
