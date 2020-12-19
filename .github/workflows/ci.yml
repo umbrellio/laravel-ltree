@@ -144,9 +144,7 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ env.COMPOSER_TOKEN }}
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: php-${{ matrix.php-versions }}-postgres-${{ matrix.postgres }}
-        run: |
-          composer global require twinh/php-coveralls
-          php-coveralls --coverage_clover=build/logs/clover.xml -v
+        run: ./vendor/bin/php-coveralls --coverage_clover=build/logs/clover.xml -v
   coverage:
     needs: test
     runs-on: ubuntu-latest
