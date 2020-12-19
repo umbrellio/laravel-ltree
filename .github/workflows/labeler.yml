@@ -1,6 +1,5 @@
 name: "Auto labeling for a pull request."
-on:
-  - pull_request_target
+on: pull_request
 
 jobs:
   triage:
