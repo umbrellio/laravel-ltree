@@ -39,7 +39,8 @@ trait HasTreeRelationships
         }
 
         if ($foreignKey === null) {
-            $foreignKey = $this->{$throwRelation}()
+            $foreignKey = $this
+                ->{$throwRelation}()
                 ->getForeignKeyName();
         }
 
