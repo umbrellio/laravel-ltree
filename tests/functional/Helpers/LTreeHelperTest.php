@@ -60,6 +60,13 @@ class LTreeHelperTest extends LTreeBaseTestCase
 
         $nodeMoscow->refresh();
         $this->assertSame('New Russia', $nodeMoscow->name);
+
+        $nodeRussia->name = null;
+        $nodeRussia->save();
+        $this->ltreeService->updatePath($nodeRussia);
+
+        $nodeMoscow->refresh();
+        $this->assertNull($nodeMoscow->name);
     }
 
     /**
