@@ -53,7 +53,8 @@ class BelongsToTree extends Relation
 
         $this->query->{$whereIn}($key, $this->getEagerModelKeys($models));
 
-        $table = $this->getModel()->getTable();
+        $table = $this->getModel()
+            ->getTable();
         $alias = sprintf('%s_depends', $table);
 
         $related = $this->getLTreeRelated();
@@ -129,7 +130,8 @@ class BelongsToTree extends Relation
 
     private function getLTreeRelated(): LTreeModelInterface
     {
-        return $this->parent->{$this->throughRelationName}()->related;
+        return $this->parent->{$this->throughRelationName}()
+            ->related;
     }
 
     private function getParentKey()

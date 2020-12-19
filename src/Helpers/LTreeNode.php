@@ -42,7 +42,8 @@ class LTreeNode extends AbstractPresenter
 
     public function addChild(self $node): void
     {
-        $this->getChildren()->add($node);
+        $this->getChildren()
+            ->add($node);
         $node->setParent($this);
     }
 
@@ -56,9 +57,11 @@ class LTreeNode extends AbstractPresenter
 
     public function countDescendants(): int
     {
-        return $this->getChildren()->reduce(static function (int $count, self $node) {
-            return $count + $node->countDescendants();
-        }, $this->getChildren()->count());
+        return $this->getChildren()
+            ->reduce(static function (int $count, self $node) {
+    return $count + $node->countDescendants();
+}, $this->getChildren()
+    ->count());
     }
 
     public function findInTree(int $id): ?self
@@ -80,9 +83,10 @@ class LTreeNode extends AbstractPresenter
         if (!$this->isRoot()) {
             $callback($this);
         }
-        $this->getChildren()->each(static function (self $node) use ($callback) {
-            $node->each($callback);
-        });
+        $this->getChildren()
+            ->each(static function (self $node) use ($callback) {
+    $node->each($callback);
+});
     }
 
     public function toCollection(): LTreeCollection
@@ -120,7 +124,8 @@ class LTreeNode extends AbstractPresenter
             /** @var LTreeNode $child */
             $child->sortTree($callback);
         });
-        $this->children = $children->sort($callback)->values();
+        $this->children = $children->sort($callback)
+            ->values();
     }
 
     private function fillTreeArray(iterable $nodes, callable $callback)

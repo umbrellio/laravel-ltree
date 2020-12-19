@@ -22,24 +22,33 @@ trait HasLTreeTables
         DB::statement('CREATE EXTENSION IF NOT EXISTS LTREE');
         Schema::create('categories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('parent_id')->nullable();
-            $table->ltree('path')->nullable();
+            $table->bigInteger('parent_id')
+                ->nullable();
+            $table->ltree('path')
+                ->nullable();
             $table->index('parent_id');
             $table->timestamps(6);
-            $table->string('name')->nullable();
+            $table->string('name')
+                ->nullable();
             $table->softDeletes();
-            $table->tinyInteger('is_deleted')->unsigned()->default(1);
+            $table->tinyInteger('is_deleted')
+                ->unsigned()
+                ->default(1);
             $table->unique('path');
         });
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('category_id')->nullable();
+            $table->bigInteger('category_id')
+                ->nullable();
             $table->timestamps(6);
 
-            $table->foreign('category_id')->on('categories')->references('id');
+            $table->foreign('category_id')
+                ->on('categories')
+                ->references('id');
         });
         DB::statement("COMMENT ON COLUMN categories.path IS '(DC2Type:ltree)'");
-        $this->ltreeService = app()->make(LTreeServiceInterface::class);
+        $this->ltreeService = app()
+            ->make(LTreeServiceInterface::class);
     }
 
     private function initLTreeCategories(): void
