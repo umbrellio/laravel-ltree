@@ -1,6 +1,6 @@
 # laravel-ltree
 
-[![Build Github Actions](https://github.com/umbrellio/laravel-ltree/workflows/ci/badge.svg)]
+[![Github Status](https://github.com/umbrellio/laravel-ltree/workflows/CI/badge.svg)](https://github.com/umbrellio/laravel-ltree/actions)
 [![Build Status](https://travis-ci.org/umbrellio/laravel-ltree.svg?branch=master)](https://travis-ci.org/umbrellio/laravel-ltree)
 [![Coverage Status](https://coveralls.io/repos/github/umbrellio/laravel-ltree/badge.svg?branch=master)](https://coveralls.io/github/umbrellio/laravel-ltree?branch=master)
 
@@ -15,7 +15,7 @@ php composer.phar require umbrellio/laravel-ltree
 
 ## How to use
 
-Implement your `Eloquent\Model` from `LTreeModelInterface`.
+Implement your `Eloquent\Model` from `LTreeModelInterface` and use `LTreeModelTrait`.
 
 Use LTreeService for build path:
 1. when create model: `createPath(LTreeModelInterface $model)`
