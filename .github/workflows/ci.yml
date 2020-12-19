@@ -4,8 +4,7 @@ on:
   push:
   pull_request:
 
-env:	
-  COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}	
+env:
   COVERAGE: '1'
   php_extensions: 'apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip'
   key: cache-v0.1
@@ -80,7 +79,6 @@ jobs:
           - '10'
           - '11'
           - '12'
-          - '13'
         php_versions:
           - '7.3'
           - '7.4'
@@ -149,7 +147,7 @@ jobs:
         working-directory: './'
       - name: Upload coverage results to Coveralls
         env:
-          COVERALLS_REPO_TOKEN: ${{ env.COMPOSER_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: php-${{ matrix.php-versions }}-postgres-${{ matrix.postgres }}
         run: ./vendor/bin/php-coveralls --coverage_clover=build/logs/clover.xml -v
@@ -159,7 +157,7 @@ jobs:
     name: "Code coverage"
     steps:
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v1.1.2
         with:
-          github-token: ${{ env.COMPOSER_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true

@@ -6,17 +6,81 @@ namespace Umbrellio\LTree\tests\_data\Traits;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Interfaces\LTreeServiceInterface;
 use Umbrellio\LTree\tests\_data\Models\CategoryStub;
+use Umbrellio\LTree\tests\_data\Models\ProductStub;
 use Umbrellio\LTree\tests\FunctionalTestCase;
 use Umbrellio\Postgres\Schema\Blueprint;
 
 /**
  * @mixin FunctionalTestCase
+ * @property LTreeServiceInterface $ltreeService
  */
 trait HasLTreeTables
 {
+    protected $ltreeService;
+
+    protected function getCategoriesWithSelfParent(): LTreeCollection
+    {
+        $this->createCategory([
+            'id' => 13,
+            'parent_id' => 13,
+            'path' => '13.13',
+            'name' => 'Self parent',
+        ]);
+        return $this->getCategories();
+    }
+
+    protected function getCategoriesWithUnknownParent(): LTreeCollection
+    {
+        CategoryStub::query()->find(11)->delete();
+        return $this->getCategories();
+    }
+
+    protected function getCategories(): LTreeCollection
+    {
+        return CategoryStub::query()->orderBy('name')->get();
+    }
+
+    protected function getRandomCategories(): LTreeCollection
+    {
+        return CategoryStub::query()->inRandomOrder()->get();
+    }
+
+    protected function createCategory(array $attributes): LTreeModelInterface
+    {
+        $model = new CategoryStub();
+        $model->fill($attributes);
+        $model->save();
+
+        return $model;
+    }
+
+    protected function createProduct(array $attributes): LTreeModelInterface
+    {
+        $model = new ProductStub();
+        $model->fill($attributes);
+        $model->save();
+
+        return $model;
+    }
+
+    protected function getRoot(): CategoryStub
+    {
+        return $this->getCategories()
+            ->find(1);
+    }
+
+    protected function findNodeByPath(string $path): CategoryStub
+    {
+        return $this
+            ->getCategories()
+            ->where('path', $path)
+            ->first();
+    }
+
     private function initLTreeService(): void
     {
         DB::statement('CREATE EXTENSION IF NOT EXISTS LTREE');
@@ -79,14 +143,5 @@ trait HasLTreeTables
             11 => [11, '11', null, 'Britain'],
             12 => [12, '11.12', 11, 'London'],
         ];
-    }
-
-    private function createCategory(array $attributes): LTreeModelInterface
-    {
-        $model = new CategoryStub();
-        $model->fill($attributes);
-        $model->save();
-
-        return $model;
     }
 }
