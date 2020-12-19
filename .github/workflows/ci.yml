@@ -1,4 +1,4 @@
-name: CI	
+name: Code check
 
 on:	
   push:
@@ -9,7 +9,6 @@ env:
   COVERAGE: '1'
   php_extensions: 'apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip'
   key: cache-v0.1
-  DATABASE_URL: 'postgres://postgres@postgres@localhost:5432/testing?charset=UTF-8'
   DB_USER: 'postgres'
   DB_NAME: 'testing'
   DB_PASSWORD: 'postgres'
@@ -27,7 +26,7 @@ jobs:
       fail-fast: false
     env:	
       PHP_CS_FIXER_FUTURE_MODE: '0'
-    name: 'Lint / PHP ${{ matrix.php_versions }} @ ${{ matrix.operating_system }}'
+    name: 'Lint PHP'
     steps:	
       - name: 'Checkout'
         uses: actions/checkout@v2
@@ -88,7 +87,7 @@ jobs:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-    name: 'Unit Testing / PHP ${{ matrix.php_versions }} @ ${{ matrix.operating_system }} with Postgres ${{ matrix.postgres }}'
+    name: 'Test / PHP ${{ matrix.php_versions }} with Postgres ${{ matrix.postgres }}'
     needs:
       - lint
     steps:
@@ -118,24 +117,12 @@ jobs:
         with:
           php-version: ${{ matrix.php_versions }}
           extensions: ${{ env.php_extensions }}
-          ini-values: 'date.timezone=UTC, upload_max_filesize=20M, post_max_size=20M, memory_limit=512M, short_open_tag=Off'
+          ini-values: 'pcov.directory=src, date.timezone=UTC, upload_max_filesize=20M, post_max_size=20M, memory_limit=512M, short_open_tag=Off'
           coverage: pcov
           tools: 'phpunit'
       - name: 'Install PHP dependencies with Composer'
         run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
         working-directory: './'
-#      - uses: harmon758/postgresql-action@v1
-#        with:
-#          postgresql version: ${{ matrix.postgres }}
-#          postgresql db: ${{ env.DB_NAME }}
-#          postgresql user: ${{ env.DB_USER }}
-#          postgresql password: ${{ env.DB_PASSWORD }}
-
-#      - name: Setup Postgres database
-#        uses: Daniel-Marynicz/postgresql-action@master
-#        with:
-#          postgres_image_tag: ${{ matrix.postgres }}-alpine
-#          postgres_extensions: ltree
       - name: 'Run Unit Tests with PHPUnit'
         env:
           # use localhost for the host here because we are running the job on the VM.
@@ -145,17 +132,20 @@ jobs:
           POSTGRES_DB: ${{ env.DB_NAME }}
           POSTGRES_HOST: 127.0.0.1
           POSTGRES_PORT: 5432
-        run: './vendor/bin/phpunit --configuration phpunit.github.xml --coverage-clover build/logs/clover.xml'
+        run: './vendor/bin/phpunit --verbose --stderr --configuration phpunit.github.xml --coverage-clover build/logs/clover.xml --coverage-text'
         working-directory: './'
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ env.COMPOSER_TOKEN }}
-          flag-name: ${{ matrix.php_versions }}-postgres-${{ matrix.postgres }}
-          parallel: true
+      - name: Upload coverage results to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ env.COMPOSER_TOKEN }}
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: php-${{ matrix.php-versions }}-postgres-${{ matrix.postgres }}
+        run: |
+          composer global require twinh/php-coveralls
+          php-coveralls --coverage_clover=build/logs/clover.xml -v
   coverage:
     needs: test
     runs-on: ubuntu-latest
+    name: "Code coverage"
     steps:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@master
