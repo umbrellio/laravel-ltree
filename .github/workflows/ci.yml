@@ -7,10 +7,12 @@ on:
 env:	
   COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}	
   COVERAGE: '1'
-  working_directory: ./
   php_extensions: 'apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip'
   key: cache-v0.1
   DATABASE_URL: 'postgres://postgres@postgres@localhost:5432/testing?charset=UTF-8'
+  DB_USER: 'postgres'
+  DB_NAME: 'testing'
+  DB_PASSWORD: 'postgres'
 
 jobs:	
   lint:
@@ -54,25 +56,12 @@ jobs:
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/php.json"'
       - name: 'Setup problem matchers for PHPUnit'
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
-      - name: 'Get Composer cache directory'
-        id: composer-cache
-        run: 'echo "::set-output name=dir::$(composer config cache-files-dir)"'
-        working-directory: '${{env.working_directory}}'
-      - name: 'Cache dependencies'
-        uses: actions/cache@v1
-        with:
-          path: '${{ steps.composer-cache.outputs.dir }}'
-          key: '${{ runner.os }}-composer-${{ hashFiles(''**/composer.lock'') }}'
-          restore-keys: '${{ runner.os }}-composer-'
-      - name: 'Validate composer.json and composer.lock'
-        run: 'composer validate'
-        working-directory: '${{env.working_directory}}'
       - name: 'Install PHP dependencies with Composer'
         run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
-        working-directory: '${{env.working_directory}}'
+        working-directory: './'
       - name: 'Linting PHP source files'
         run: 'vendor/bin/ecs check --config=ecs.yml .'
-  unit_testing:
+  test:
     strategy:
       fail-fast: false
       matrix:
@@ -88,21 +77,20 @@ jobs:
           - '7.4'
           # - '8.0'
     runs-on: '${{ matrix.operating_system }}'
+    services:
+      postgres:
+        image: 'postgres:${{ matrix.postgres }}'
+        env:
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.DB_NAME }}
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     name: 'Unit Testing / PHP ${{ matrix.php_versions }} @ ${{ matrix.operating_system }} with Postgres ${{ matrix.postgres }}'
     needs:
       - lint
-    services:
-      postgres:
-        image: postgres:${{ matrix.postgres }}
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -116,8 +104,8 @@ jobs:
         id: cache-env
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: '${{ matrix.php_versions }}'
-          extensions: '${{ env.php_extensions }}'
+          php-version: ${{ matrix.php_versions }}
+          extensions: ${{ env.php_extensions }}
           key: '${{ env.key }}'
       - name: 'Cache extensions'
         uses: actions/cache@v1
@@ -128,31 +116,49 @@ jobs:
       - name: 'Setup PHP'
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '${{ matrix.php_versions }}'
-          extensions: '${{ env.php_extensions }}'
+          php-version: ${{ matrix.php_versions }}
+          extensions: ${{ env.php_extensions }}
           ini-values: 'date.timezone=UTC, upload_max_filesize=20M, post_max_size=20M, memory_limit=512M, short_open_tag=Off'
           coverage: pcov
           tools: 'phpunit'
       - name: 'Install PHP dependencies with Composer'
         run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
-        working-directory: '${{env.working_directory}}'
-      - name: 'Test connection to Postgres:${{ matrix.postgres }}'
-        env:
-          # use localhost for the host here because we are running the job on the VM.
-          # If we were running the job on in a container this would be postgres
-          POSTGRES_HOST: postgres
-          POSTGRES_PORT: 5432
-        run: |
-          set -ex
-          echo "Preparing Postgres ${{ matrix.postgres }}"
-          sudo service postgresql stop || true
-          sudo docker run -d --name postgres -p 5432:5432 postgres:${{ matrix.postgres }}
-          echo "Postgres ${{ matrix.postgres }} ready"
+        working-directory: './'
+#      - uses: harmon758/postgresql-action@v1
+#        with:
+#          postgresql version: ${{ matrix.postgres }}
+#          postgresql db: ${{ env.DB_NAME }}
+#          postgresql user: ${{ env.DB_USER }}
+#          postgresql password: ${{ env.DB_PASSWORD }}
+
+#      - name: Setup Postgres database
+#        uses: Daniel-Marynicz/postgresql-action@master
+#        with:
+#          postgres_image_tag: ${{ matrix.postgres }}-alpine
+#          postgres_extensions: ltree
       - name: 'Run Unit Tests with PHPUnit'
         env:
           # use localhost for the host here because we are running the job on the VM.
           # If we were running the job on in a container this would be postgres
-          POSTGRES_HOST: postgres
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_HOST: 127.0.0.1
           POSTGRES_PORT: 5432
         run: './vendor/bin/phpunit --configuration phpunit.github.xml --coverage-clover build/logs/clover.xml'
-        working-directory: '${{env.working_directory}}'
+        working-directory: './'
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ env.COMPOSER_TOKEN }}
+          flag-name: ${{ matrix.php_versions }}-postgres-${{ matrix.postgres }}
+          parallel: true
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ env.COMPOSER_TOKEN }}
+          parallel-finished: true
