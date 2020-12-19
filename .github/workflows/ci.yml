@@ -61,16 +61,6 @@ jobs:
         working-directory: './'
       - name: 'Linting PHP source files'
         run: 'vendor/bin/ecs check --config=ecs.yml .'
-  psalm:
-    name: Psalm
-    needs:
-      - lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Psalm
-        uses: docker://vimeo/psalm-github-actions
   test:
     strategy:
       fail-fast: false
