@@ -1,8 +1,9 @@
 # laravel-ltree
 
 [![Github Status](https://github.com/umbrellio/laravel-ltree/workflows/CI/badge.svg)](https://github.com/umbrellio/laravel-ltree/actions)
-[![Build Status](https://travis-ci.org/umbrellio/laravel-ltree.svg?branch=master)](https://travis-ci.org/umbrellio/laravel-ltree)
 [![Coverage Status](https://coveralls.io/repos/github/umbrellio/laravel-ltree/badge.svg?branch=master)](https://coveralls.io/github/umbrellio/laravel-ltree?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/umbrellio/laravel-ltree/v/stable.png)](https://packagist.org/packages/umbrellio/laravel-ltree)
+[![Total Downloads](https://poser.pugx.org/umbrellio/laravel-ltree/downloads.png)](https://packagist.org/packages/umbrellio/laravel-ltree)
 
 LTree Extension (PostgreSQL) for Laravel. 
 
