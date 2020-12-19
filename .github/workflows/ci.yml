@@ -72,7 +72,6 @@ jobs:
           - '12'
           - '13'
         php_versions:
-          - '7.2'
           - '7.3'
           - '7.4'
           - '8.0'
@@ -97,7 +96,7 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     name: 'Test / PHP ${{ matrix.php_versions }} with Postgres ${{ matrix.postgres }}'
-#    continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: ${{ matrix.php_versions == '8.0' }}
     needs:
       - lint
     steps:
