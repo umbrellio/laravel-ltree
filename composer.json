@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": "7.*",
+    "php": "^7.3|^7.4|^8.0",
     "laravel/framework": "^5.8|^6.0|^7.0|^8.0",
     "doctrine/dbal": "^2.9",
     "umbrellio/laravel-pg-extensions": "3.*|4.*",
@@ -18,7 +18,7 @@
   },
   "require-dev": {
     "umbrellio/code-style-php": "^1.0",
-    "orchestra/testbench": "^3.5",
+    "orchestra/testbench": "^3.5|^6.0",
     "php-coveralls/php-coveralls": "^2.1"
   },
   "scripts": {

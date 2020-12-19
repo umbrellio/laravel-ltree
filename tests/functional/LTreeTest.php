@@ -34,6 +34,7 @@ class LTreeTest extends FunctionalTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->initLTreeService();
     }
 
@@ -110,7 +111,9 @@ class LTreeTest extends FunctionalTestCase
         $nodes = $this->createTreeNodes($this->getTreeNodes());
         $parentColumn = $nodes[1]->getLtreeParentColumn();
         $this->assertSame(1, $nodes[1]::descendantsOf($nodes[11])->withoutSelf(11)->count());
-        $nodes[1]->update([$parentColumn => 11]);
+        $nodes[1]->update([
+            $parentColumn => 11,
+        ]);
         $this->ltreeService->updatePath($nodes[1]);
         $this->assertSame(11, $nodes[1]::descendantsOf($nodes[11])->withoutSelf(11)->count());
         $this->assertSame(11, $nodes[1]->getLtreeParentId());
@@ -146,7 +149,9 @@ class LTreeTest extends FunctionalTestCase
     {
         $nodes = $this->createTreeNodes($this->getTreeNodes());
         $this->assertSame(9, $nodes[1]::descendantsOf($nodes[1])->withoutSelf(1)->count());
-        $nodes[1]->update(['is_deleted' => 1]);
+        $nodes[1]->update([
+            'is_deleted' => 1,
+        ]);
         $nodes[1]->delete();
         $nodes[1]->refresh();
         $this->ltreeService->dropDescendants($nodes[1]);
@@ -224,7 +229,9 @@ class LTreeTest extends FunctionalTestCase
         $tree = $this->createTreeNodes($this->getTreeNodes());
         $product = $this->getProduct();
 
-        $product->category()->associate($tree[$id]); // 1.3
+        // 1.3
+        $product->category()
+            ->associate($tree[$id]);
         $product->save();
 
         $find = ProductStub::first();
@@ -249,7 +256,9 @@ class LTreeTest extends FunctionalTestCase
         $rootSome = $this->getCategorySome();
         $rootSome->save();
 
-        $childSome = $this->getCategorySome(['parent_id' => $rootSome->getKey()]);
+        $childSome = $this->getCategorySome([
+            'parent_id' => $rootSome->getKey(),
+        ]);
         $childSome->save();
 
         $this->expectException(InvalidTraitInjectionClass::class);
