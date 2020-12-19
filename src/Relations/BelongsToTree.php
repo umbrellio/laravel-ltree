@@ -72,6 +72,33 @@ class BelongsToTree extends Relation
         $this->query->selectRaw(sprintf('%s.*, %s.%s as relation_id', $alias, $table, $this->ownerKey));
     }
 
+    public function addEagerConstraintsTo(array $models): void
+    {
+        $key = $this->related->getTable() . '.' . $this->ownerKey;
+
+        $whereIn = $this->whereInMethod($this->related, $this->ownerKey);
+
+        $this->query->{$whereIn}($key, $this->getEagerModelKeys($models));
+
+        $table = $this
+            ->getModel()
+            ->getTable();
+        $alias = sprintf('%s_depends', $table);
+
+        $related = $this->getLTreeRelated();
+
+        $this->query->join(
+            sprintf('%s as %s', $table, $alias),
+            function (JoinClause $query) use ($alias, $table, $related) {
+                $query->whereRaw(sprintf('%1$s.%2$s @> %3$s.%2$s', $alias, $related->getLtreePathColumn(), $table));
+            }
+        );
+
+        $this->query->orderBy($related->getLtreePathColumn());
+
+        $this->query->selectRaw(sprintf('%s.*, %s.%s as relation_id', $alias, $table, $this->ownerKey));
+    }
+
     public function match(array $models, Collection $results, $relation)
     {
         $dictionary = [];
