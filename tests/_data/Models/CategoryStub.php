@@ -14,6 +14,7 @@ final class CategoryStub extends Model implements LTreeModelInterface
     use SoftDeletes;
     use LTreeModelTrait {
         getLtreeProxyDeleteColumns as getBaseLtreeProxyDeleteColumns;
+        getLtreeProxyUpdateColumns as getBaseLtreeProxyUpdateColumns;
     }
 
     protected $table = 'categories';
@@ -27,5 +28,10 @@ final class CategoryStub extends Model implements LTreeModelInterface
     public function getLtreeProxyDeleteColumns(): array
     {
         return array_merge($this->getBaseLtreeProxyDeleteColumns(), ['is_deleted']);
+    }
+
+    public function getLtreeProxyUpdateColumns(): array
+    {
+        return array_merge($this->getBaseLTreeProxyUpdateColumns(), ['name']);
     }
 }

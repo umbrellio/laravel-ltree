@@ -47,6 +47,24 @@ class LTreeHelperTest extends LTreeBaseTestCase
     /**
      * @test
      */
+    public function proxyColumns(): void
+    {
+        $nodeMoscow = $this->findNodeByPath('1.3');
+        $nodeRussia = $this->findNodeByPath('1');
+
+        $this->assertSame('Moscow', $nodeMoscow->name);
+
+        $nodeRussia->name = 'New Russia';
+        $nodeRussia->save();
+        $this->ltreeService->updatePath($nodeRussia);
+
+        $nodeMoscow->refresh();
+        $this->assertSame('New Russia', $nodeMoscow->name);
+    }
+
+    /**
+     * @test
+     */
     public function deleteRoot(): void
     {
         $root = $this->getRoot();
