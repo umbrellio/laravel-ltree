@@ -56,7 +56,9 @@ jobs:
       - name: 'Setup problem matchers for PHPUnit'
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
       - name: 'Install PHP dependencies with Composer'
-        run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
+        run: |
+          rm composer.lock
+          composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
         working-directory: './'
       - name: 'Linting PHP source files'
         run: 'vendor/bin/ecs check --config=ecs.yml .'
@@ -75,14 +77,6 @@ jobs:
           - '7.3'
           - '7.4'
           - '8.0'
-#        experimental: [false]
-#        include:
-#          - operating_system: ubuntu-latest
-#          - php_versions: "8.0"
-#            composer-options: "--ignore-platform-reqs"
-#            experimental: true
-#          - postgres: "13"
-#            experimental: true
     runs-on: '${{ matrix.operating_system }}'
     services:
       postgres:
@@ -130,7 +124,9 @@ jobs:
           coverage: pcov
           tools: 'phpunit'
       - name: 'Install PHP dependencies with Composer'
-        run: 'composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader'
+        run: |
+          rm composer.lock
+          composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
         working-directory: './'
       - name: 'Run Unit Tests with PHPUnit'
         env:
