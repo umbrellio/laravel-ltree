@@ -1,5 +1,6 @@
-name: "Auto labeling for a pull request."
-on: pull_request
+name: "Auto labeling for a pull request"
+on:
+  - pull_request_target
 
 jobs:
   triage:
@@ -9,3 +10,4 @@ jobs:
       - uses: actions/labeler@main
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          sync-labels: true

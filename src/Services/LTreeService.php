@@ -18,14 +18,6 @@ final class LTreeService implements LTreeServiceInterface
         $this->helper = $helper;
     }
 
-    /**
-     * @testing coverage checker
-     */
-    public function testMethod(LTreeModelInterface $model): void
-    {
-        $this->helper->buildPath($model);
-    }
-
     public function createPath(LTreeModelInterface $model): void
     {
         $this->helper->buildPath($model);
