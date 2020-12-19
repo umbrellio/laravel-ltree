@@ -70,9 +70,11 @@ class LTreeCollection extends Collection
      */
     private function appendAncestors($model): void
     {
-        $paths = $this->pluck($model->getLtreePathColumn())
+        $paths = $this
+            ->pluck($model->getLtreePathColumn())
             ->toArray();
-        $ids = $this->pluck($model->getKeyName())
+        $ids = $this
+            ->pluck($model->getKeyName())
             ->toArray();
 
         /** @var Model $model */
