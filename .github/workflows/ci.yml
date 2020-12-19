@@ -156,5 +156,4 @@ jobs:
           parallel-finished: true
       - name: Coverage Webhook
         run: |
-          ls -lah
-          curl https://coveralls.io/webhook?repo_token=${{ secrets.GITHUB_TOKEN }} -d "payload[build_num]=${{ github.sha }}&payload[status]=done"
+          curl https://coveralls.io/webhook?repo_token=${{ secrets.COVERALS }} -d "payload[build_num]=${{ github.sha }}&payload[status]=done"
