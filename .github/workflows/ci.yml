@@ -76,14 +76,14 @@ jobs:
           - '7.3'
           - '7.4'
           - '8.0'
-        experimental: [false]
-        include:
-          - operating_system: ubuntu-latest
-          - php_versions: "8.0"
-            composer-options: "--ignore-platform-reqs"
-            experimental: true
-          - postgres: "13"
-            experimental: true
+#        experimental: [false]
+#        include:
+#          - operating_system: ubuntu-latest
+#          - php_versions: "8.0"
+#            composer-options: "--ignore-platform-reqs"
+#            experimental: true
+#          - postgres: "13"
+#            experimental: true
     runs-on: '${{ matrix.operating_system }}'
     services:
       postgres:
@@ -97,7 +97,7 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     name: 'Test / PHP ${{ matrix.php_versions }} with Postgres ${{ matrix.postgres }}'
-    continue-on-error: ${{ matrix.experimental }}
+#    continue-on-error: ${{ matrix.experimental }}
     needs:
       - lint
     steps:
