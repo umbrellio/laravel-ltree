@@ -3,6 +3,7 @@ on: pull_request
 
 jobs:
   add-reviews:
+    name: "Auto assignment of a assignee"
     runs-on: ubuntu-latest
     steps:
       - uses: kentaro-m/auto-assign-action@v1.1.2
