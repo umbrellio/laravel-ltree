@@ -32,7 +32,8 @@
   "require-dev": {
     "umbrellio/code-style-php": "^1.0",
     "orchestra/testbench": "^3.5|^6.0",
-    "php-coveralls/php-coveralls": "^2.1"
+    "php-coveralls/php-coveralls": "^2.1",
+    "squizlabs/php_codesniffer": "^3.5"
   },
   "scripts": {
     "lint": [

@@ -4,6 +4,10 @@
 [![Coverage Status](https://coveralls.io/repos/github/umbrellio/laravel-ltree/badge.svg?branch=master)](https://coveralls.io/github/umbrellio/laravel-ltree?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/umbrellio/laravel-ltree/v/stable.png)](https://packagist.org/packages/umbrellio/laravel-ltree)
 [![Total Downloads](https://poser.pugx.org/umbrellio/laravel-ltree/downloads.png)](https://packagist.org/packages/umbrellio/laravel-ltree)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/umbrellio/laravel-ltree/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
+[![Build Status](https://scrutinizer-ci.com/g/umbrellio/laravel-ltree/badges/build.png?b=master)](https://scrutinizer-ci.com/g/umbrellio/laravel-ltree/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/umbrellio/laravel-ltree/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/umbrellio/laravel-ltree/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/umbrellio/laravel-ltree/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/umbrellio/laravel-ltree/?branch=master)
 
 LTree Extension (PostgreSQL) for Laravel. 
 

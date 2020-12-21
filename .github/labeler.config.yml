@@ -1,7 +1,9 @@
 type:build:
   - ".github/**"
   - ".coveralls.yml"
+  - ".scrutinizer.yml"
   - "phpunit.github.xml"
+  - "phpunit.scrutinizer.xml"
   - ".gitignore"
   - "ecs.yml"
 
