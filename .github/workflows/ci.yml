@@ -65,6 +65,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        experimental:
+          - false
         operating_system:
           - ubuntu-latest
         postgres:
@@ -75,6 +77,23 @@ jobs:
           - '7.3'
           - '7.4'
           - '8.0'
+        include:
+          - operating_system: ubuntu-latest
+            postgres: '10'
+            php_versions: '8.0'
+            experimental: true
+          - operating_system: ubuntu-latest
+            postgres: '11'
+            php_versions: '8.0'
+            experimental: true
+          - operating_system: ubuntu-latest
+            postgres: '12'
+            php_versions: '8.0'
+            experimental: true
+          - operating_system: ubuntu-latest
+            postgres: '13'
+            php_versions: '8.0'
+            experimental: true
     runs-on: '${{ matrix.operating_system }}'
     services:
       postgres:
@@ -88,15 +107,14 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     name: 'Test / PHP ${{ matrix.php_versions }} with Postgres ${{ matrix.postgres }}'
-    continue-on-error: ${{ matrix.php_versions == '8.0' }}
     needs:
       - lint
     steps:
-      - name: Checkout
+      - name: 'Checkout'
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - name: apt-get
+      - name: 'Install postgres client'
         run: |
           sudo apt-get update -y
           sudo apt-get install -y libpq-dev postgresql-client
@@ -127,28 +145,37 @@ jobs:
           composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
         working-directory: './'
       - name: 'Run Unit Tests with PHPUnit'
+        continue-on-error: ${{ matrix.experimental }}
         env:
-          # use localhost for the host here because we are running the job on the VM.
-          # If we were running the job on in a container this would be postgres
           POSTGRES_USER: ${{ env.DB_USER }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
           POSTGRES_DB: ${{ env.DB_NAME }}
           POSTGRES_HOST: 127.0.0.1
           POSTGRES_PORT: 5432
-        run: './vendor/bin/phpunit --verbose --stderr --configuration phpunit.github.xml --coverage-clover build/logs/clover.xml --coverage-text'
+        run: |
+          ./vendor/bin/phpunit \
+            --verbose \
+            --stderr \
+            --configuration phpunit.github.xml \
+            --coverage-clover build/logs/clover.xml \
+            --coverage-text
         working-directory: './'
-      - name: Upload coverage results to Coveralls
+      - name: 'Upload coverage results to Coveralls'
+        continue-on-error: ${{ matrix.experimental }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: php-${{ matrix.php-versions }}-postgres-${{ matrix.postgres }}
-        run: ./vendor/bin/php-coveralls --coverage_clover=build/logs/clover.xml -v
+        run: |
+          ./vendor/bin/php-coveralls \
+            --coverage_clover=build/logs/clover.xml \
+            -v
   coverage:
     needs: test
     runs-on: ubuntu-latest
     name: "Code coverage"
     steps:
-      - name: Coveralls Finished
+      - name: 'Coveralls Finished'
         uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

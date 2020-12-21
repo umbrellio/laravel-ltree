@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cf1caf8fa3331618d44362de0b233a9e",
+    "content-hash": "9c7133f56b88da0ca086ffd4c9751037",
     "packages": [
         {
             "name": "brick/math",
@@ -4253,25 +4253,26 @@
         },
         {
             "name": "umbrellio/laravel-pg-extensions",
-            "version": "4.5.1",
+            "version": "4.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/umbrellio/laravel-pg-extensions.git",
-                "reference": "fe9f510ed864bcb9329c6c2f676ba7ad9c7306ca"
+                "reference": "aa426b062ff40a972d11501763acbd86c4428412"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/fe9f510ed864bcb9329c6c2f676ba7ad9c7306ca",
-                "reference": "fe9f510ed864bcb9329c6c2f676ba7ad9c7306ca",
+                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/aa426b062ff40a972d11501763acbd86c4428412",
+                "reference": "aa426b062ff40a972d11501763acbd86c4428412",
                 "shasum": ""
             },
             "require": {
-                "doctrine/dbal": "^2.9",
+                "doctrine/dbal": "^2.9|^3.0",
                 "laravel/framework": "^5.8|^6.0|^7.0|^8.0",
                 "php": "^7.2|^7.3|^7.4|^8.0"
             },
             "require-dev": {
-                "orchestra/testbench": "^3.5",
+                "codeception/codeception": "^3.0|^4.0",
+                "orchestra/testbench": "^3.5|^6.0",
                 "php-coveralls/php-coveralls": "^2.1",
                 "umbrellio/code-style-php": "^1.0"
             },
@@ -4302,9 +4303,9 @@
             "description": "Extensions for Postgres Laravel",
             "support": {
                 "issues": "https://github.com/umbrellio/laravel-pg-extensions/issues",
-                "source": "https://github.com/umbrellio/laravel-pg-extensions/tree/4.5.1"
+                "source": "https://github.com/umbrellio/laravel-pg-extensions/tree/4.5.2"
             },
-            "time": "2020-12-19T17:34:13+00:00"
+            "time": "2020-12-20T01:17:14+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -5791,16 +5792,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.10.3",
+            "version": "v4.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "dbe56d23de8fcb157bbc0cfb3ad7c7de0cfb0984"
+                "reference": "c6d052fc58cb876152f89f532b95a8d7907e7f0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/dbe56d23de8fcb157bbc0cfb3ad7c7de0cfb0984",
-                "reference": "dbe56d23de8fcb157bbc0cfb3ad7c7de0cfb0984",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/c6d052fc58cb876152f89f532b95a8d7907e7f0e",
+                "reference": "c6d052fc58cb876152f89f532b95a8d7907e7f0e",
                 "shasum": ""
             },
             "require": {
@@ -5841,9 +5842,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v4.10.3"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v4.10.4"
             },
-            "time": "2020-12-03T17:45:45+00:00"
+            "time": "2020-12-20T10:01:03+00:00"
         },
         {
             "name": "orchestra/testbench",
@@ -6523,16 +6524,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.63",
+            "version": "0.12.64",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "c97ec4754bd53099a06c24847bd2870b99966b6a"
+                "reference": "23eb1cb7ae125f45f1d0e48051bcf67a9a9b08aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c97ec4754bd53099a06c24847bd2870b99966b6a",
-                "reference": "c97ec4754bd53099a06c24847bd2870b99966b6a",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/23eb1cb7ae125f45f1d0e48051bcf67a9a9b08aa",
+                "reference": "23eb1cb7ae125f45f1d0e48051bcf67a9a9b08aa",
                 "shasum": ""
             },
             "require": {
@@ -6563,7 +6564,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.63"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.64"
             },
             "funding": [
                 {
@@ -6579,7 +6580,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-12-15T16:37:16+00:00"
+            "time": "2020-12-21T11:59:02+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
