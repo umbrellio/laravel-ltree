@@ -2,12 +2,25 @@
   "name": "umbrellio/laravel-ltree",
   "type": "library",
   "description": "Extension LTree (Postgres) for Laravel",
+  "keywords": [
+    "ltree",
+    "tree",
+    "postgres",
+    "postgresql",
+    "pg",
+    "ltree-extension",
+    "laravel",
+    "php"
+  ],
   "minimum-stability": "stable",
   "authors": [
     {
       "name": "Korben Dallas",
       "email": "pvsaintpe@umbrellio.biz"
     }
+  ],
+  "license": [
+    "MIT License"
   ],
   "require": {
     "php": "^7.3|^7.4|^8.0",
