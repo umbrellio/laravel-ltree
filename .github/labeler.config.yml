@@ -1,12 +1,11 @@
 type:build:
   - ".github/**"
-  - ".travis.yml"
   - ".coveralls.yml"
   - "phpunit.github.xml"
-  - "phpunit.travis.xml"
   - ".gitignore"
   - "ecs.yml"
-  - "tests/travis/*"
+
+dependencies:
   - "composer.json"
   - "composer.lock"
 
@@ -34,7 +33,7 @@ type:interfaces:
   - "src/Interfaces/*"
 
 type:tests:
-  - any: ['tests/**/*', 'phpunit.xml.dist', 'tests.sh', '!tests/travis/*']
+  - any: ['tests/**/*', 'phpunit.xml.dist', 'tests.sh']
 
 theme:documentation:
   - "README.md"
