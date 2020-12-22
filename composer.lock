@@ -799,16 +799,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.19.0",
+            "version": "v8.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "f5f331cee60f1bbe672503b7eb9ba5b22b2ceacb"
+                "reference": "130168c9dcd399f6b42bccfe4882b88c81a4edfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/f5f331cee60f1bbe672503b7eb9ba5b22b2ceacb",
-                "reference": "f5f331cee60f1bbe672503b7eb9ba5b22b2ceacb",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/130168c9dcd399f6b42bccfe4882b88c81a4edfe",
+                "reference": "130168c9dcd399f6b42bccfe4882b88c81a4edfe",
                 "shasum": ""
             },
             "require": {
@@ -962,7 +962,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2020-12-15T16:16:31+00:00"
+            "time": "2020-12-22T17:01:04+00:00"
         },
         {
             "name": "league/commonmark",
@@ -4253,20 +4253,20 @@
         },
         {
             "name": "umbrellio/laravel-pg-extensions",
-            "version": "4.5.2",
+            "version": "4.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/umbrellio/laravel-pg-extensions.git",
-                "reference": "aa426b062ff40a972d11501763acbd86c4428412"
+                "reference": "c351367ffe76660ccc45327d4a76c366e2ec7436"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/aa426b062ff40a972d11501763acbd86c4428412",
-                "reference": "aa426b062ff40a972d11501763acbd86c4428412",
+                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/c351367ffe76660ccc45327d4a76c366e2ec7436",
+                "reference": "c351367ffe76660ccc45327d4a76c366e2ec7436",
                 "shasum": ""
             },
             "require": {
-                "doctrine/dbal": "^2.9|^3.0",
+                "doctrine/dbal": "^2.9",
                 "laravel/framework": "^5.8|^6.0|^7.0|^8.0",
                 "php": "^7.2|^7.3|^7.4|^8.0"
             },
@@ -4303,9 +4303,9 @@
             "description": "Extensions for Postgres Laravel",
             "support": {
                 "issues": "https://github.com/umbrellio/laravel-pg-extensions/issues",
-                "source": "https://github.com/umbrellio/laravel-pg-extensions/tree/4.5.2"
+                "source": "https://github.com/umbrellio/laravel-pg-extensions/tree/4.7.0"
             },
-            "time": "2020-12-20T01:17:14+00:00"
+            "time": "2020-12-22T19:34:56+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
