@@ -12,35 +12,6 @@ build_failure_conditions:
   - 'patches.label("Doc Comments").exists'                        # No doc comments patches allowed
   - 'patches.label("Spacing").exists'                             # No spacing patches allowed
 
-build:
-  cache:
-    directories:
-      - vendor        # Cache for already installed composer package -> speed up composer install
-      - ~/.composer   # Composer home directory (avoid fetching already fetched packages)
-  dependencies:
-    override:
-      - composer run-script build-scrutinizer
-
-  environment:
-    rabbitmq: false
-    mysql: false
-    postgresql: true
-    mongodb: false
-    elasticsearch: false
-    redis: false
-    memcached: false
-    neo4j: false
-  tests:
-    override:
-      -
-        command: ./vendor/bin/phpcs
-      -
-        command: ./vendor/bin/phpunit --configuration phpunit.scrutinizer.xml --coverage-clover=build/logs/clover.xml
-        idle_timeout: 1200
-        coverage:
-          file: 'build/logs/clover.xml'
-          format: 'php-clover'
-
 tools:
   php_analyzer:
     enabled: true
@@ -59,7 +30,7 @@ tools:
       simplify_boolean_return:
         enabled: true
   external_code_coverage: false
-  php_code_coverage: false
+  php_code_coverage: true
   php_changetracking: true
   php_cpd: true
   php_cs_fixer: false
