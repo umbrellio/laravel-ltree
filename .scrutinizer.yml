@@ -18,8 +18,6 @@ build:
       - vendor        # Cache for already installed composer package -> speed up composer install
       - ~/.composer   # Composer home directory (avoid fetching already fetched packages)
   dependencies:
-    before:
-      - rm composer.lock
     override:
       - composer run-script build-scrutinizer
 
