@@ -79,6 +79,14 @@ jobs:
           - '8.0'
         include:
           - operating_system: ubuntu-latest
+            postgres: '9.6'
+            php_versions: '7.3'
+            experimental: false
+          - operating_system: ubuntu-latest
+            postgres: '9.6'
+            php_versions: '7.4'
+            experimental: false
+          - operating_system: ubuntu-latest
             postgres: '10'
             php_versions: '8.0'
             experimental: true
@@ -106,7 +114,7 @@ jobs:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-    name: 'Test / PHP ${{ matrix.php_versions }} with Postgres ${{ matrix.postgres }}'
+    name: 'Test / PHP ${{ matrix.php_versions }} / Postgres ${{ matrix.postgres }}'
     needs:
       - lint
     steps:
@@ -161,11 +169,11 @@ jobs:
             --coverage-text
         working-directory: './'
       - name: 'Upload coverage results to Coveralls'
-        continue-on-error: ${{ matrix.experimental }}
+        if: ${{ !matrix.experimental }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_PARALLEL: true
-          COVERALLS_FLAG_NAME: php-${{ matrix.php-versions }}-postgres-${{ matrix.postgres }}
+          COVERALLS_FLAG_NAME: php-${{ matrix.php_versions }}-postgres-${{ matrix.postgres }}
         run: |
           ./vendor/bin/php-coveralls \
             --coverage_clover=build/logs/clover.xml \

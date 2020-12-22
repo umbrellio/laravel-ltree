@@ -1,9 +1,7 @@
 type:build:
-  - ".github/**"
+  - ".github/**/*"
   - ".coveralls.yml"
-  - ".scrutinizer.yml"
   - "phpunit.github.xml"
-  - "phpunit.scrutinizer.xml"
   - ".gitignore"
   - "ecs.yml"
 
@@ -12,30 +10,32 @@ dependencies:
   - "composer.lock"
 
 type:helper:
-  - "src/Helpers/*"
-  - "src/Traits/*"
+  - "src/Helpers/**/*"
+  - "src/Traits/**/*"
 
 type:providers:
-  - "src/Providers/*"
-  - "src/Schema/*"
-  - "src/Types/*"
+  - "src/Providers/**/*"
+  - "src/Schema/**/*"
+  - "src/Types/**/*"
   - "src/LTreeExtension.php"
 
 type:resources:
-  - "src/Resources/*"
+  - "src/Resources/**/*"
 
 type:relations:
-  - "src/Relations/*"
+  - "src/Relations/**/*"
 
 type:services:
-  - "src/Services/*"
-  - "src/Exceptions/*"
+  - "src/Services/**/*"
+  - "src/Exceptions/**/*"
 
 type:interfaces:
-  - "src/Interfaces/*"
+  - "src/Interfaces/**/*"
 
 type:tests:
-  - any: ['tests/**/*', 'phpunit.xml.dist', 'tests.sh']
+  - 'tests/**/*'
+  - 'phpunit.xml.dist'
+  - 'tests.sh'
 
 theme:documentation:
   - "README.md"
