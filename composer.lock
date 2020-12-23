@@ -799,16 +799,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.20.0",
+            "version": "v8.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "130168c9dcd399f6b42bccfe4882b88c81a4edfe"
+                "reference": "b5d8573ab16027867eaa1ac148893833434f9b02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/130168c9dcd399f6b42bccfe4882b88c81a4edfe",
-                "reference": "130168c9dcd399f6b42bccfe4882b88c81a4edfe",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/b5d8573ab16027867eaa1ac148893833434f9b02",
+                "reference": "b5d8573ab16027867eaa1ac148893833434f9b02",
                 "shasum": ""
             },
             "require": {
@@ -962,7 +962,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2020-12-22T17:01:04+00:00"
+            "time": "2020-12-22T21:21:19+00:00"
         },
         {
             "name": "league/commonmark",
@@ -4253,20 +4253,20 @@
         },
         {
             "name": "umbrellio/laravel-pg-extensions",
-            "version": "4.7.0",
+            "version": "4.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/umbrellio/laravel-pg-extensions.git",
-                "reference": "c351367ffe76660ccc45327d4a76c366e2ec7436"
+                "reference": "ed7212e1338c77546802c9defc1f3d76fa1a8177"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/c351367ffe76660ccc45327d4a76c366e2ec7436",
-                "reference": "c351367ffe76660ccc45327d4a76c366e2ec7436",
+                "url": "https://api.github.com/repos/umbrellio/laravel-pg-extensions/zipball/ed7212e1338c77546802c9defc1f3d76fa1a8177",
+                "reference": "ed7212e1338c77546802c9defc1f3d76fa1a8177",
                 "shasum": ""
             },
             "require": {
-                "doctrine/dbal": "^2.9",
+                "doctrine/dbal": "2.9.*|2.12.*",
                 "laravel/framework": "^5.8|^6.0|^7.0|^8.0",
                 "php": "^7.2|^7.3|^7.4|^8.0"
             },
@@ -4275,6 +4275,10 @@
                 "orchestra/testbench": "^3.5|^6.0",
                 "php-coveralls/php-coveralls": "^2.1",
                 "umbrellio/code-style-php": "^1.0"
+            },
+            "suggest": {
+                "umbrellio/laravel-common-objects": "Package with helpers for common Laravel components",
+                "umbrellio/laravel-ltree": "Package for working with Postgres LTree extension"
             },
             "type": "library",
             "extra": {
@@ -4290,6 +4294,9 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
             "authors": [
                 {
                     "name": "Vitaliy Lazeev",
@@ -4301,11 +4308,21 @@
                 }
             ],
             "description": "Extensions for Postgres Laravel",
+            "keywords": [
+                "builder",
+                "extension",
+                "laravel",
+                "migrations",
+                "php",
+                "postgres",
+                "postgresql",
+                "schema"
+            ],
             "support": {
                 "issues": "https://github.com/umbrellio/laravel-pg-extensions/issues",
-                "source": "https://github.com/umbrellio/laravel-pg-extensions/tree/4.7.0"
+                "source": "https://github.com/umbrellio/laravel-pg-extensions/tree/4.8.0"
             },
-            "time": "2020-12-22T19:34:56+00:00"
+            "time": "2020-12-22T22:37:48+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
