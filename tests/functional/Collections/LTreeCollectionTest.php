@@ -47,6 +47,36 @@ class LTreeCollectionTest extends LTreeBaseTestCase
         );
     }
 
+    public function provideTreeWithoutLeaves(): Generator
+    {
+        yield 'without_leaves' => [
+            'ids' => [10, 7, 12],
+            'expected' => [1, 3, 6, 11],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideTreeWithoutLeaves
+     */
+    public function withoutLeaves(array $ids, array $expected): void
+    {
+        $this->assertSame(
+            CategoryStub::query()
+                ->whereKey($ids)
+                ->get()
+                ->withLeaves(false)
+                ->toTree()
+                ->toCollection()
+                ->sortBy(function (LTreeModelInterface $item) {
+                    return $item->getKey();
+                })
+                ->pluck('id')
+                ->toArray(),
+            $expected
+        );
+    }
+
     public function provideNoConstency(): Generator
     {
         yield 'non_consistent_without_loading' => [

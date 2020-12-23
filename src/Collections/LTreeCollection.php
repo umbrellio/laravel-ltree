@@ -8,15 +8,19 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Helpers\LTreeBuilder;
 use Umbrellio\LTree\Helpers\LTreeNode;
+use Umbrellio\LTree\Interfaces\HasLTreeRelations;
 use Umbrellio\LTree\Interfaces\LTreeInterface;
 use Umbrellio\LTree\Interfaces\ModelInterface;
+use Umbrellio\LTree\Traits\LTreeModelTrait;
 
 /**
  * @method LTreeInterface|ModelInterface first()
- * @property LTreeInterface[]|ModelInterface[] $items
+ * @property LTreeInterface[]|ModelInterface[]|HasLTreeRelations[] $items
  */
 class LTreeCollection extends Collection
 {
+    private $withLeaves = true;
+
     public function toTree(bool $usingSort = true, bool $loadMissing = true): LTreeNode
     {
         if (!$model = $this->first()) {
@@ -25,6 +29,10 @@ class LTreeCollection extends Collection
 
         if ($loadMissing) {
             $this->loadMissingNodes($model);
+        }
+
+        if (!$this->withLeaves) {
+            $this->excludeLeaves();
         }
 
         $builder = new LTreeBuilder(
@@ -36,9 +44,13 @@ class LTreeCollection extends Collection
         return $builder->build($collection ?? $this, $usingSort);
     }
 
-    /**
-     * This method loads the missing nodes, making the tree branches correct.
-     */
+    public function withLeaves(bool $state = true): self
+    {
+        $this->withLeaves = $state;
+
+        return $this;
+    }
+
     private function loadMissingNodes($model): self
     {
         if ($this->hasMissingNodes($model)) {
@@ -46,6 +58,16 @@ class LTreeCollection extends Collection
         }
 
         return $this;
+    }
+
+    private function excludeLeaves(): void
+    {
+        foreach ($this->items as $key => $item) {
+            /** @var LTreeModelTrait $item */
+            if ($item->ltreeChildren->isEmpty()) {
+                $this->forget($key);
+            }
+        }
     }
 
     /**
