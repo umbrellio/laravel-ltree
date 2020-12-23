@@ -799,16 +799,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.20.0",
+            "version": "v8.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "130168c9dcd399f6b42bccfe4882b88c81a4edfe"
+                "reference": "b5d8573ab16027867eaa1ac148893833434f9b02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/130168c9dcd399f6b42bccfe4882b88c81a4edfe",
-                "reference": "130168c9dcd399f6b42bccfe4882b88c81a4edfe",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/b5d8573ab16027867eaa1ac148893833434f9b02",
+                "reference": "b5d8573ab16027867eaa1ac148893833434f9b02",
                 "shasum": ""
             },
             "require": {
@@ -962,7 +962,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2020-12-22T17:01:04+00:00"
+            "time": "2020-12-22T21:21:19+00:00"
         },
         {
             "name": "league/commonmark",
@@ -4206,25 +4206,26 @@
         },
         {
             "name": "umbrellio/laravel-common-objects",
-            "version": "2.0.1",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/umbrellio/laravel-common-objects.git",
-                "reference": "b339f916180e824110729894e945955f3b215243"
+                "reference": "252e9dbc15985b18bb23b0d7f2a8405fe126cbe5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/umbrellio/laravel-common-objects/zipball/b339f916180e824110729894e945955f3b215243",
-                "reference": "b339f916180e824110729894e945955f3b215243",
+                "url": "https://api.github.com/repos/umbrellio/laravel-common-objects/zipball/252e9dbc15985b18bb23b0d7f2a8405fe126cbe5",
+                "reference": "252e9dbc15985b18bb23b0d7f2a8405fe126cbe5",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
                 "hemp/presenter": "^2.0",
                 "laravel/framework": "^5.8|^6.0|^7.0|^8.0",
                 "php": "^7.2|^7.3|^7.4|^8.0"
             },
             "require-dev": {
-                "orchestra/testbench": "^3.5",
+                "orchestra/testbench": "^3.5|^4.0|^5.0|^6.0",
                 "php-coveralls/php-coveralls": "^2.1",
                 "umbrellio/code-style-php": "^1.0"
             },
@@ -4245,11 +4246,21 @@
                 }
             ],
             "description": "Common objects for extending base Laravel functionality.",
+            "keywords": [
+                "decorators",
+                "helpers",
+                "laravel",
+                "php",
+                "presenters",
+                "rules",
+                "validation",
+                "validators"
+            ],
             "support": {
                 "issues": "https://github.com/umbrellio/laravel-common-objects/issues",
-                "source": "https://github.com/umbrellio/laravel-common-objects/tree/2.0.1"
+                "source": "https://github.com/umbrellio/laravel-common-objects/tree/2.1.0"
             },
-            "time": "2020-12-19T17:14:07+00:00"
+            "time": "2020-12-22T21:55:25+00:00"
         },
         {
             "name": "umbrellio/laravel-pg-extensions",
