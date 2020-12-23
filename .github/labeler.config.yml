@@ -13,6 +13,9 @@ type:helper:
   - "src/Helpers/**/*"
   - "src/Traits/**/*"
 
+type:collections:
+  - "src/Collections/**/*"
+
 type:providers:
   - "src/Providers/**/*"
   - "src/Schema/**/*"
