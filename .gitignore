@@ -4,3 +4,5 @@
 phpunit.xml
 /build/*
 .phpunit.result.cache
+.DS_Store
+composer.lock

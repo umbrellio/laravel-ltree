@@ -13,23 +13,26 @@ categories:
   - title: 'Features'
     labels:
       - 'feature'
-      - 'type:compilers'
-      - 'type:helpers'
-      - 'type:routines'
-      - 'type:indexes'
-      - 'type:schema'
+      - 'type:helper'
+      - 'type:collections'
+      - 'type:providers'
+      - 'type:resources'
+      - 'type:relations'
+      - 'type:services'
+      - 'type:interfaces'
+      - 'type:services'
   - title: 'Bug Fixes'
     labels:
       - 'fix'
       - 'bugfix'
       - 'bug'
       - 'hotfix'
-      - 'duplicate'
+      - 'dependencies'
   - title: 'Maintenance'
     labels:
       - 'type:build'
       - 'refactoring'
-      - 'theme:docs'
+      - 'theme:documentation'
       - 'type:tests'
       - 'analysis'
 
@@ -44,11 +47,14 @@ version-resolver:
     labels:
       - feature
       - minor
-      - type:helpers
-      - type:indexes
-      - type:routines
-      - type:schema
-      - type:compilers
+      - 'type:helper'
+      - 'type:collections'
+      - 'type:providers'
+      - 'type:resources'
+      - 'type:relations'
+      - 'type:services'
+      - 'type:interfaces'
+      - 'type:services'
   patch:
     labels:
       - patch
@@ -57,6 +63,6 @@ version-resolver:
       - bugfix
       - hotfix
       - fix
-      - theme:docs
+      - theme:documentation
       - analysis
   default: patch
