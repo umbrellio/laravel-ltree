@@ -32,7 +32,7 @@ categories:
     labels:
       - 'type:build'
       - 'refactoring'
-      - 'theme:documentation'
+      - 'theme:docs'
       - 'type:tests'
       - 'analysis'
 
