@@ -1,7 +1,6 @@
 type:build:
   - ".github/**/*"
   - ".coveralls.yml"
-  - "phpunit.github.xml"
   - ".gitignore"
   - "ecs.yml"
   - "phpcs.xml"

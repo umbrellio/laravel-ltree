@@ -18,6 +18,7 @@ env:
   DB_USER: 'postgres'
   DB_NAME: 'testing'
   DB_PASSWORD: 'postgres'
+  DB_HOST: '127.0.0.1'
 
 jobs:	
   lint:
@@ -157,19 +158,16 @@ jobs:
         working-directory: './'
       - name: 'Run Unit Tests with PHPUnit'
         continue-on-error: ${{ matrix.experimental }}
-        env:
-          POSTGRES_USER: ${{ env.DB_USER }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_NAME }}
-          POSTGRES_HOST: 127.0.0.1
-          POSTGRES_PORT: 5432
         run: |
+          sed -e "s/\${USERNAME}/${{ env.DB_USER }}/" \
+              -e "s/\${PASSWORD}/${{ env.DB_PASSWORD }}/" \
+              -e "s/\${DATABASE}/${{ env.DB_NAME }}/" \
+              -e "s/\${HOST}/${{ env.DB_HOST }}/" \
+              phpunit.xml.dist > phpunit.xml
           ./vendor/bin/phpunit \
             --verbose \
             --stderr \
-            --configuration phpunit.github.xml \
-            --coverage-clover build/logs/clover.xml \
-            --coverage-text
+            --coverage-clover build/logs/clover.xml
         working-directory: './'
       - name: 'Upload coverage results to Coveralls'
         if: ${{ !matrix.experimental }}
