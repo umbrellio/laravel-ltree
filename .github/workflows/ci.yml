@@ -167,7 +167,6 @@ jobs:
           ./vendor/bin/phpunit \
             --verbose \
             --stderr \
-            --configuration phpunit.github.xml \
             --coverage-clover build/logs/clover.xml \
             --coverage-text
         working-directory: './'
