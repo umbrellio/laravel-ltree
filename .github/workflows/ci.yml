@@ -167,8 +167,7 @@ jobs:
           ./vendor/bin/phpunit \
             --verbose \
             --stderr \
-            --coverage-clover build/logs/clover.xml \
-            --coverage-text
+            --coverage-clover build/logs/clover.xml
         working-directory: './'
       - name: 'Upload coverage results to Coveralls'
         if: ${{ !matrix.experimental }}
