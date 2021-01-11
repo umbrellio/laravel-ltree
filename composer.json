@@ -19,9 +19,7 @@
       "email": "pvsaintpe@umbrellio.biz"
     }
   ],
-  "license": [
-    "MIT License"
-  ],
+  "license": "MIT",
   "require": {
     "php": "^7.3|^7.4|^8.0",
     "laravel/framework": "^5.8|^6.0|^7.0|^8.0",
