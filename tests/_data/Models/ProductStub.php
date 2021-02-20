@@ -11,7 +11,8 @@ use Umbrellio\LTree\Traits\LTreeModelTrait;
 
 final class ProductStub extends Model implements LTreeModelInterface
 {
-    use LTreeModelTrait, HasTreeRelationships;
+    use LTreeModelTrait;
+    use HasTreeRelationships;
 
     protected $table = 'products';
 
@@ -26,8 +27,13 @@ final class ProductStub extends Model implements LTreeModelInterface
         return $this->belongsTo(CategoryStub::class);
     }
 
-    public function categoryTree()
+    public function categoryParentsTree()
     {
-        return $this->belongsToTree(CategoryStub::class, 'category');
+        return $this->belongsToParentsTree(CategoryStub::class, 'category');
+    }
+
+    public function categoryDescendantsTree()
+    {
+        return $this->belongsToDescendantsTree(CategoryStub::class, 'category');
     }
 }

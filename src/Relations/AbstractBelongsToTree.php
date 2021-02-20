@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
+use Umbrellio\LTree\Traits\LTreeModelTrait;
 
-class BelongsToTree extends Relation
+abstract class AbstractBelongsToTree extends Relation
 {
     protected $throughRelationName;
     private $foreignKey;
@@ -37,10 +38,7 @@ class BelongsToTree extends Relation
             $relation = $this->parent->{$this->throughRelationName};
 
             if ($relation) {
-                $this->query = $relation
-                    ->newQuery()
-                    ->ancestorsOf($relation)
-                    ->orderBy($this->getLTreeRelated()->getLtreePathColumn());
+                $this->query = $this->getQueryForTree($relation);
             }
         }
     }
@@ -63,7 +61,13 @@ class BelongsToTree extends Relation
         $this->query->join(
             sprintf('%s as %s', $table, $alias),
             function (JoinClause $query) use ($alias, $table, $related) {
-                $query->whereRaw(sprintf('%1$s.%2$s @> %3$s.%2$s', $alias, $related->getLtreePathColumn(), $table));
+                $query->whereRaw(sprintf(
+                    '%1$s.%2$s %4$s %3$s.%2$s',
+                    $alias,
+                    $related->getLtreePathColumn(),
+                    $table,
+                    $this->getOperator()
+                ));
             }
         );
 
@@ -114,6 +118,13 @@ class BelongsToTree extends Relation
         return $models;
     }
 
+    /**
+     * @param Builder|LTreeModelTrait $model
+     */
+    abstract protected function getQueryForTree($model): Builder;
+
+    abstract protected function getOperator(): string;
+
     protected function getEagerModelKeys(array $models)
     {
         $keys = [];
@@ -129,7 +140,7 @@ class BelongsToTree extends Relation
         return array_values(array_unique($keys));
     }
 
-    private function getLTreeRelated(): LTreeModelInterface
+    protected function getLTreeRelated(): LTreeModelInterface
     {
         return $this
             ->parent

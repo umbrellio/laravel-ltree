@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
-use Umbrellio\LTree\Relations\BelongsToTree;
+use Umbrellio\LTree\Relations\AbstractBelongsToTree;
+use Umbrellio\LTree\Relations\BelongsToDescendantsTree;
+use Umbrellio\LTree\Relations\BelongsToParentsTree;
 
 /**
  * @mixin HasRelationships
@@ -19,16 +21,47 @@ trait HasTreeRelationships
 {
     /**
      * @param null $ownerKey
-     * @return BelongsToTree
+     * @return AbstractBelongsToTree
      *
      * @throws InvalidTraitInjectionClass
      */
-    protected function belongsToTree(
+    final protected function belongsToParentsTree(
         string $related,
         string $throwRelation,
         ?string $foreignKey = null,
         $ownerKey = null
     ) {
+        return $this->belongsToTree(BelongsToParentsTree::class, $related, $throwRelation, $foreignKey, $ownerKey);
+    }
+
+    /**
+     * @param null $ownerKey
+     * @return AbstractBelongsToTree
+     *
+     * @throws InvalidTraitInjectionClass
+     */
+    final protected function belongsToDescendantsTree(
+        string $related,
+        string $throwRelation,
+        ?string $foreignKey = null,
+        $ownerKey = null
+    ) {
+        return $this->belongsToTree(
+            BelongsToDescendantsTree::class,
+            $related,
+            $throwRelation,
+            $foreignKey,
+            $ownerKey
+        );
+    }
+
+    final private function belongsToTree(
+        string $relationClass,
+        string $related,
+        string $throwRelation,
+        ?string $foreignKey = null,
+        $ownerKey = null
+    ): AbstractBelongsToTree {
         $instance = $this->newRelatedInstance($related);
 
         if (!$instance instanceof LTreeModelInterface) {
@@ -46,6 +79,6 @@ trait HasTreeRelationships
 
         $ownerKey = $ownerKey ?: $instance->getKeyName();
 
-        return new BelongsToTree($instance->newQuery(), $this, $throwRelation, $foreignKey, $ownerKey);
+        return new $relationClass($instance->newQuery(), $this, $throwRelation, $foreignKey, $ownerKey);
     }
 }
