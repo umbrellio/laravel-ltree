@@ -27,9 +27,9 @@ final class CategorySomeStub extends Model
         return $this->belongsTo(static::class);
     }
 
-    public function parentParentsTree()
+    public function parentAncestorsTree()
     {
-        return $this->belongsToParentsTree(static::class, 'parent');
+        return $this->belongsToAncestorsTree(static::class, 'parent');
     }
 
     public function parentDescendantsTree()

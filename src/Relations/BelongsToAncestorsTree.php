@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Traits\LTreeModelTrait;
 
-class BelongsToDescendantsTree extends AbstractBelongsToTree
+class BelongsToAncestorsTree extends AbstractBelongsToTree
 {
     /**
      * @param Builder|LTreeModelTrait|Model $query
@@ -17,11 +17,11 @@ class BelongsToDescendantsTree extends AbstractBelongsToTree
      */
     protected function modifyQuery($query, Model $model): Builder
     {
-        return $query->descendantsOf($model);
+        return $query->ancestorsOf($model);
     }
 
     protected function getOperator(): string
     {
-        return '<@';
+        return '@>';
     }
 }

@@ -57,17 +57,17 @@ class BelongsToTreelTest extends LTreeBaseTestCase
         $product->save();
 
         $item = ProductStub::query()->first();
-        $this->assertFalse(array_key_exists('category_parents_tree', $item->toArray()));
-        $this->assertSame($level1, optional($item->categoryParentsTree->get(0))->getKey());
-        $this->assertSame($level2, optional($item->categoryParentsTree->get(1))->getKey());
-        $this->assertSame($level3, optional($item->categoryParentsTree->get(2))->getKey());
+        $this->assertFalse(array_key_exists('category_ancestors_tree', $item->toArray()));
+        $this->assertSame($level1, optional($item->categoryAncestorsTree->get(0))->getKey());
+        $this->assertSame($level2, optional($item->categoryAncestorsTree->get(1))->getKey());
+        $this->assertSame($level3, optional($item->categoryAncestorsTree->get(2))->getKey());
 
-        $itemWith = ProductStub::with('categoryParentsTree')->first();
-        $this->assertTrue(array_key_exists('category_parents_tree', $itemWith->toArray()));
-        $this->assertSame($count, $itemWith->categoryParentsTree->count());
-        $this->assertSame($level1, optional($itemWith->categoryParentsTree->get(0))->getKey());
-        $this->assertSame($level2, optional($itemWith->categoryParentsTree->get(1))->getKey());
-        $this->assertSame($level3, optional($itemWith->categoryParentsTree->get(2))->getKey());
+        $itemWith = ProductStub::with('categoryAncestorsTree')->first();
+        $this->assertTrue(array_key_exists('category_ancestors_tree', $itemWith->toArray()));
+        $this->assertSame($count, $itemWith->categoryAncestorsTree->count());
+        $this->assertSame($level1, optional($itemWith->categoryAncestorsTree->get(0))->getKey());
+        $this->assertSame($level2, optional($itemWith->categoryAncestorsTree->get(1))->getKey());
+        $this->assertSame($level3, optional($itemWith->categoryAncestorsTree->get(2))->getKey());
     }
 
     /**
@@ -123,7 +123,7 @@ class BelongsToTreelTest extends LTreeBaseTestCase
         $childSome->save();
 
         $this->expectException(InvalidTraitInjectionClass::class);
-        $childSome->parentParentsTree();
+        $childSome->parentAncestorsTree();
     }
 
     public function missingDescendantsLtreeModel(): void

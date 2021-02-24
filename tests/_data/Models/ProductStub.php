@@ -27,9 +27,9 @@ final class ProductStub extends Model implements LTreeModelInterface
         return $this->belongsTo(CategoryStub::class);
     }
 
-    public function categoryParentsTree()
+    public function categoryAncestorsTree()
     {
-        return $this->belongsToParentsTree(CategoryStub::class, 'category');
+        return $this->belongsToAncestorsTree(CategoryStub::class, 'category');
     }
 
     public function categoryDescendantsTree()

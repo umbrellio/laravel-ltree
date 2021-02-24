@@ -35,10 +35,13 @@ abstract class AbstractBelongsToTree extends Relation
     public function addConstraints(): void
     {
         if (static::$constraints) {
+            /** @var Model $relation */
             $relation = $this->parent->{$this->throughRelationName};
 
             if ($relation) {
-                $this->query = $this->getQueryForTree($relation);
+                $this->query = $this
+                    ->modifyQuery($relation->newQuery(), $relation)
+                    ->orderBy($this->getLTreeRelated()->getLtreePathColumn());
             }
         }
     }
@@ -119,9 +122,9 @@ abstract class AbstractBelongsToTree extends Relation
     }
 
     /**
-     * @param Builder|LTreeModelTrait $model
+     * @param Builder|LTreeModelTrait $query
      */
-    abstract protected function getQueryForTree($model): Builder;
+    abstract protected function modifyQuery($query, Model $model): Builder;
 
     abstract protected function getOperator(): string;
 
@@ -140,7 +143,7 @@ abstract class AbstractBelongsToTree extends Relation
         return array_values(array_unique($keys));
     }
 
-    protected function getLTreeRelated(): LTreeModelInterface
+    private function getLTreeRelated(): LTreeModelInterface
     {
         return $this
             ->parent

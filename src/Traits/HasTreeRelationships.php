@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\Relations\AbstractBelongsToTree;
+use Umbrellio\LTree\Relations\BelongsToAncestorsTree;
 use Umbrellio\LTree\Relations\BelongsToDescendantsTree;
-use Umbrellio\LTree\Relations\BelongsToParentsTree;
 
 /**
  * @mixin HasRelationships
@@ -20,24 +20,18 @@ use Umbrellio\LTree\Relations\BelongsToParentsTree;
 trait HasTreeRelationships
 {
     /**
-     * @param null $ownerKey
-     * @return AbstractBelongsToTree
-     *
      * @throws InvalidTraitInjectionClass
      */
-    final protected function belongsToParentsTree(
+    final protected function belongsToAncestorsTree(
         string $related,
         string $throwRelation,
         ?string $foreignKey = null,
         $ownerKey = null
     ) {
-        return $this->belongsToTree(BelongsToParentsTree::class, $related, $throwRelation, $foreignKey, $ownerKey);
+        return $this->belongsToTree(BelongsToAncestorsTree::class, $related, $throwRelation, $foreignKey, $ownerKey);
     }
 
     /**
-     * @param null $ownerKey
-     * @return AbstractBelongsToTree
-     *
      * @throws InvalidTraitInjectionClass
      */
     final protected function belongsToDescendantsTree(
