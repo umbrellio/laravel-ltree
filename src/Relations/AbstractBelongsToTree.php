@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
+use Umbrellio\LTree\Traits\LTreeModelTrait;
 
-class BelongsToTree extends Relation
+abstract class AbstractBelongsToTree extends Relation
 {
     protected $throughRelationName;
     private $foreignKey;
@@ -34,12 +35,12 @@ class BelongsToTree extends Relation
     public function addConstraints(): void
     {
         if (static::$constraints) {
+            /** @var Model $relation */
             $relation = $this->parent->{$this->throughRelationName};
 
             if ($relation) {
-                $this->query = $relation
-                    ->newQuery()
-                    ->ancestorsOf($relation)
+                $this->query = $this
+                    ->modifyQuery($relation->newQuery(), $relation)
                     ->orderBy($this->getLTreeRelated()->getLtreePathColumn());
             }
         }
@@ -63,7 +64,13 @@ class BelongsToTree extends Relation
         $this->query->join(
             sprintf('%s as %s', $table, $alias),
             function (JoinClause $query) use ($alias, $table, $related) {
-                $query->whereRaw(sprintf('%1$s.%2$s @> %3$s.%2$s', $alias, $related->getLtreePathColumn(), $table));
+                $query->whereRaw(sprintf(
+                    '%1$s.%2$s %4$s %3$s.%2$s',
+                    $alias,
+                    $related->getLtreePathColumn(),
+                    $table,
+                    $this->getOperator()
+                ));
             }
         );
 
@@ -113,6 +120,13 @@ class BelongsToTree extends Relation
 
         return $models;
     }
+
+    /**
+     * @param Builder|LTreeModelTrait $query
+     */
+    abstract protected function modifyQuery($query, Model $model): Builder;
+
+    abstract protected function getOperator(): string;
 
     protected function getEagerModelKeys(array $models)
     {

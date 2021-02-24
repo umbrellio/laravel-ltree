@@ -69,7 +69,8 @@ trait HasLTreeTables
 
     protected function getRoot(): CategoryStub
     {
-        return $this->getCategories()
+        return $this
+            ->getCategories()
             ->find(1);
     }
 

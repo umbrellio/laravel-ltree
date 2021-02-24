@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
-use Umbrellio\LTree\Relations\BelongsToTree;
+use Umbrellio\LTree\Relations\AbstractBelongsToTree;
+use Umbrellio\LTree\Relations\BelongsToAncestorsTree;
+use Umbrellio\LTree\Relations\BelongsToDescendantsTree;
 
 /**
  * @mixin HasRelationships
@@ -18,17 +20,42 @@ use Umbrellio\LTree\Relations\BelongsToTree;
 trait HasTreeRelationships
 {
     /**
-     * @param null $ownerKey
-     * @return BelongsToTree
-     *
      * @throws InvalidTraitInjectionClass
      */
-    protected function belongsToTree(
+    final protected function belongsToAncestorsTree(
         string $related,
         string $throwRelation,
         ?string $foreignKey = null,
         $ownerKey = null
     ) {
+        return $this->belongsToTree(BelongsToAncestorsTree::class, $related, $throwRelation, $foreignKey, $ownerKey);
+    }
+
+    /**
+     * @throws InvalidTraitInjectionClass
+     */
+    final protected function belongsToDescendantsTree(
+        string $related,
+        string $throwRelation,
+        ?string $foreignKey = null,
+        $ownerKey = null
+    ) {
+        return $this->belongsToTree(
+            BelongsToDescendantsTree::class,
+            $related,
+            $throwRelation,
+            $foreignKey,
+            $ownerKey
+        );
+    }
+
+    final private function belongsToTree(
+        string $relationClass,
+        string $related,
+        string $throwRelation,
+        ?string $foreignKey = null,
+        $ownerKey = null
+    ): AbstractBelongsToTree {
         $instance = $this->newRelatedInstance($related);
 
         if (!$instance instanceof LTreeModelInterface) {
@@ -46,6 +73,6 @@ trait HasTreeRelationships
 
         $ownerKey = $ownerKey ?: $instance->getKeyName();
 
-        return new BelongsToTree($instance->newQuery(), $this, $throwRelation, $foreignKey, $ownerKey);
+        return new $relationClass($instance->newQuery(), $this, $throwRelation, $foreignKey, $ownerKey);
     }
 }
