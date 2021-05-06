@@ -116,8 +116,8 @@ class LTreeNode extends AbstractPresenter
     }
 
     /**
-     * Usage sortTree(['name' =>'asc', 'category'=>'desc'])
-     * or callback with arguments ($a, $b) and return -1 | 0 | 1
+     * Usage sortTree(['name' =>'asc', 'category'=>'desc']) or callback with arguments ($a, $b) and return -1 | 0 | 1
+     *
      * @param array|callable $options
      */
     public function sortTree($options)

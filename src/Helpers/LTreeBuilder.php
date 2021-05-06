@@ -33,13 +33,15 @@ class LTreeBuilder
 
         foreach ($items as $item) {
             $node = new LTreeNode($item);
+            $id = $item->{$this->idField};
+            $this->nodes[$id] = $node;
+        }
 
+        foreach ($items as $item) {
             [$id, $parentId] = $this->getNodeIds($item);
-
+            $node = $this->nodes[$id];
             $parentNode = $this->getNode($parentId);
             $parentNode->addChild($node);
-
-            $this->nodes[$id] = $node;
         }
         return $this->root;
     }
