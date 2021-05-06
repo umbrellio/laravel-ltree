@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-psql postgres -U user -tc "SELECT 1 FROM pg_database WHERE datname = 'testing'" | grep -q 1 || psql postgres -U user -c "CREATE DATABASE testing"
+psql postgres -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'testing'" | grep -q 1 || psql postgres -U postgres -c "CREATE DATABASE testing"
 sed -e "s/\${USERNAME}/postgres/" \
     -e "s/\${PASSWORD}//" \
     -e "s/\${DATABASE}/testing/" \

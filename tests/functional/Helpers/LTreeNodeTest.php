@@ -159,8 +159,8 @@ class LTreeNodeTest extends LTreeBaseTestCase
             ];
         };
         $tree = $this
-            ->getCategories()
-            ->toTree();
+            ->getRandomCategories()
+            ->toTree(false);
         $array = $tree->toTreeArray($formatter);
         $this->assertIsArray($array);
         $this->assertCount(2, $array);
