@@ -65,7 +65,7 @@ jobs:
       - name: 'Install PHP dependencies with Composer'
         run: |
           rm composer.lock
-          composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+          COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
         working-directory: './'
       - name: 'Linting PHP source files'
         run: 'vendor/bin/ecs check --config=ecs.php .'
@@ -158,7 +158,7 @@ jobs:
       - name: 'Install PHP dependencies with Composer'
         run: |
           rm composer.lock
-          composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+          COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
         working-directory: './'
       - name: 'Run Unit Tests with PHPUnit'
         continue-on-error: ${{ matrix.experimental }}
