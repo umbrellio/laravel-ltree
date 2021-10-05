@@ -35,7 +35,7 @@ trait HasLTreeTables
 
     protected function getCategoriesWithUnknownParent(): LTreeCollection
     {
-        CategoryStub::query()->find(11)->delete();
+        CategoryStub::query()->find(3)->delete();
         return $this->getCategories();
     }
 

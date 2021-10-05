@@ -38,9 +38,9 @@ class LTreeBuilder
         }
 
         foreach ($items as $item) {
-            [$id, $parentId] = $this->getNodeIds($item);
+            [$id, $parentId, $path] = $this->getNodeIds($item);
             $node = $this->nodes[$id];
-            $parentNode = $this->getNode($parentId);
+            $parentNode = $this->getNode($id, $path, $parentId);
             $parentNode->addChild($node);
         }
         return $this->root;
@@ -50,21 +50,37 @@ class LTreeBuilder
     {
         $parentId = $item->{$this->parentIdField};
         $id = $item->{$this->idField};
+        $path = $item->{$this->pathField};
 
         if ($id === $parentId) {
             throw new LTreeReflectionException($id);
         }
-        return [$id, $parentId];
+        return [$id, $parentId, $path];
     }
 
-    private function getNode(?int $id): LTreeNode
+    private function getNode(int $id, string $path, ?int $parentId): LTreeNode
     {
-        if ($id === null) {
+        if ($parentId === null || $this->hasNoMissingNodes($id, $path)) {
             return $this->root;
         }
-        if (!isset($this->nodes[$id])) {
-            throw new LTreeUndefinedNodeException($id);
+        if (!isset($this->nodes[$parentId])) {
+            throw new LTreeUndefinedNodeException($parentId);
         }
-        return $this->nodes[$id];
+        return $this->nodes[$parentId];
+    }
+
+    private function hasNoMissingNodes(int $id, string $path): bool
+    {
+        $subpath = substr($path, 0, -strlen(".{$id}"));
+        $subpathIds = explode('.', $subpath);
+
+        $missingNodes = 0;
+        foreach ($subpathIds as $parentId) {
+            if (!isset($this->nodes[$parentId])) {
+                $missingNodes++;
+            }
+        }
+
+        return $subpathIds > 0 && $missingNodes === count($subpathIds);
     }
 }
