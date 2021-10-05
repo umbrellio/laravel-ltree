@@ -47,6 +47,27 @@ class LTreeCollectionTest extends LTreeBaseTestCase
         );
     }
 
+    /**
+     * @test
+     * @dataProvider providePartialConstencyTree
+     */
+    public function withoutLoadMissingForPartialTree(array $ids, array $expected): void
+    {
+        $this->assertSame(
+            CategoryStub::query()
+                ->whereKey($ids)
+                ->get()
+                ->toTree(true, false)
+                ->toCollection()
+                ->sortBy(function (LTreeModelInterface $item) {
+                    return $item->getKey();
+                })
+                ->pluck('id')
+                ->toArray(),
+            $expected
+        );
+    }
+
     public function provideTreeWithoutLeaves(): Generator
     {
         yield 'without_leaves' => [
@@ -80,8 +101,8 @@ class LTreeCollectionTest extends LTreeBaseTestCase
     public function provideNoConstency(): Generator
     {
         yield 'non_consistent_without_loading' => [
-            'ids' => [7, 3, 12],
-            'expected' => [3, 7, 12],
+            'ids' => [1, 6, 8],
+            'expected' => [1, 6, 8],
             'loadMissing' => false,
         ];
     }
@@ -117,6 +138,21 @@ class LTreeCollectionTest extends LTreeBaseTestCase
         yield 'consistent' => [
             'items' => [1, 3, 7],
             'expected' => [1, 3, 7],
+        ];
+    }
+    public function providePartialConstencyTree(): Generator
+    {
+        yield 'partial with single branch without single nodes' => [
+            'items' => [3, 6, 7, 8, 9, 10],
+            'expected' => [3, 6, 7, 8, 9, 10],
+        ];
+        yield 'partial with single branch without more nodes' => [
+            'items' => [6, 8, 9, 10],
+            'expected' => [6, 8, 9, 10],
+        ];
+        yield 'partial with more branches' => [
+            'items' => [6, 8, 9, 10, 11, 12],
+            'expected' => [6, 8, 9, 10, 11, 12],
         ];
     }
 }

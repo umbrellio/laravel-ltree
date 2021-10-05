@@ -6,6 +6,6 @@ sed -e "s/\${USERNAME}/postgres/" \
     -e "s/\${DATABASE}/testing/" \
     -e "s/\${HOST}/127.0.0.1/" \
     phpunit.xml.dist > phpunit.xml
-composer update
+COMPOSER_MEMORY_LIMIT=-1 composer update
 composer lint
 php -d pcov.directory='.' vendor/bin/phpunit --coverage-html build --coverage-text
