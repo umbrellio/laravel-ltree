@@ -19,9 +19,6 @@ use Umbrellio\LTree\Relations\BelongsToDescendantsTree;
  */
 trait HasTreeRelationships
 {
-    /**
-     * @throws InvalidTraitInjectionClass
-     */
     final protected function belongsToAncestorsTree(
         string $related,
         string $throwRelation,
@@ -31,9 +28,7 @@ trait HasTreeRelationships
         return $this->belongsToTree(BelongsToAncestorsTree::class, $related, $throwRelation, $foreignKey, $ownerKey);
     }
 
-    /**
-     * @throws InvalidTraitInjectionClass
-     */
+
     final protected function belongsToDescendantsTree(
         string $related,
         string $throwRelation,
@@ -49,7 +44,7 @@ trait HasTreeRelationships
         );
     }
 
-    final private function belongsToTree(
+    final protected function belongsToTree(
         string $relationClass,
         string $related,
         string $throwRelation,
