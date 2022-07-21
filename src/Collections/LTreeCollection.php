@@ -51,7 +51,7 @@ class LTreeCollection extends Collection
         return $this;
     }
 
-    private function loadMissingNodes($model): self
+    public function loadMissingNodes($model): self
     {
         if ($this->hasMissingNodes($model)) {
             $this->appendAncestors($model);
