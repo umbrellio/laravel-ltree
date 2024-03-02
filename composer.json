@@ -1,59 +1,59 @@
 {
-  "name": "umbrellio/laravel-ltree",
-  "type": "library",
-  "description": "Extension LTree (Postgres) for Laravel",
-  "keywords": [
-    "ltree",
-    "tree",
-    "postgres",
-    "postgresql",
-    "pg",
-    "ltree-extension",
-    "laravel",
-    "php"
-  ],
-  "minimum-stability": "stable",
-  "authors": [
-    {
-      "name": "Korben Dallas",
-      "email": "pvsaintpe@umbrellio.biz"
+    "name": "umbrellio/laravel-ltree",
+    "type": "library",
+    "description": "Extension LTree (Postgres) for Laravel",
+    "keywords": [
+        "ltree",
+        "tree",
+        "postgres",
+        "postgresql",
+        "pg",
+        "ltree-extension",
+        "laravel",
+        "php"
+    ],
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "Korben Dallas",
+            "email": "pvsaintpe@umbrellio.biz"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.3|^7.4|^8.0|^8.1",
+        "laravel/framework": "^5.8|^6.20.26|^7.0|^8.40|^9.0|^10.0|^11.0",
+        "doctrine/dbal": "^2.9|^3.0",
+        "umbrellio/laravel-pg-extensions": "^5.0",
+        "umbrellio/laravel-common-objects": "^2.3"
+    },
+    "require-dev": {
+        "umbrellio/code-style-php": "^1.0",
+        "orchestra/testbench": "^3.5|^6.0|^9.0",
+        "php-coveralls/php-coveralls": "^2.1",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "scripts": {
+        "lint": [
+            "ecs check --config=ecs.php . --fix"
+        ]
+    },
+    "autoload": {
+        "psr-4": {
+            "Umbrellio\\LTree\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Umbrellio\\LTree\\tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Umbrellio\\LTree\\Providers\\LTreeServiceProvider",
+                "Umbrellio\\LTree\\Providers\\LTreeExtensionProvider"
+            ]
+        }
     }
-  ],
-  "license": "MIT",
-  "require": {
-    "php": "^7.3|^7.4|^8.0|^8.1",
-    "laravel/framework": "^5.8|^6.20.26|^7.0|^8.40|^9.0|^10.0",
-    "doctrine/dbal": "^2.9|^3.0",
-    "umbrellio/laravel-pg-extensions": "^5.0",
-    "umbrellio/laravel-common-objects": "^2.3"
-  },
-  "require-dev": {
-    "umbrellio/code-style-php": "^1.0",
-    "orchestra/testbench": "^3.5|^6.0",
-    "php-coveralls/php-coveralls": "^2.1",
-    "squizlabs/php_codesniffer": "^3.5"
-  },
-  "scripts": {
-    "lint": [
-      "ecs check --config=ecs.php . --fix"
-    ]
-  },
-  "autoload": {
-    "psr-4": {
-      "Umbrellio\\LTree\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Umbrellio\\LTree\\tests\\": "tests/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Umbrellio\\LTree\\Providers\\LTreeServiceProvider",
-        "Umbrellio\\LTree\\Providers\\LTreeExtensionProvider"
-      ]
-    }
-  }
 }
