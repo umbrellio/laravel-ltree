@@ -20,21 +20,21 @@ env:
   DB_PASSWORD: 'postgres'
   DB_HOST: '127.0.0.1'
 
-jobs:	
+jobs:
   lint:
     runs-on: '${{ matrix.operating_system }}'
-    timeout-minutes: 20	
-    strategy:	
+    timeout-minutes: 20
+    strategy:
       matrix:
         operating_system:
           - ubuntu-latest
         php_versions:
           - '7.4'
       fail-fast: false
-    env:	
+    env:
       PHP_CS_FIXER_FUTURE_MODE: '0'
     name: 'Lint PHP'
-    steps:	
+    steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
       - name: 'Setup cache environment'
@@ -51,11 +51,11 @@ jobs:
           key: '${{ steps.cache-env.outputs.key }}'
           restore-keys: '${{ steps.cache-env.outputs.key }}'
       - name: 'Setup PHP'
-        uses: shivammathur/setup-php@v2	
-        with:	
+        uses: shivammathur/setup-php@v2
+        with:
           php-version: ${{ matrix.php_versions }}
           extensions: '${{ env.php_extensions }}'
-          ini-values: memory_limit=-1	
+          ini-values: memory_limit=-1
           tools: pecl, composer
           coverage: none
       - name: 'Setup problem matchers for PHP (aka PHP error logs)'
@@ -107,6 +107,14 @@ jobs:
           - operating_system: ubuntu-latest
             postgres: '13'
             php_versions: '8.0'
+            experimental: true
+          - operating_system: ubuntu-latest
+            postgres: '14'
+            php_versions: '8.1'
+            experimental: true
+          - operating_system: ubuntu-latest
+            postgres: '15'
+            php_versions: '8.2'
             experimental: true
     runs-on: '${{ matrix.operating_system }}'
     services:
@@ -165,7 +173,6 @@ jobs:
               -e "s/\${HOST}/${{ env.DB_HOST }}/" \
               phpunit.xml.dist > phpunit.xml
           ./vendor/bin/phpunit \
-            --verbose \
             --stderr \
             --coverage-clover build/logs/clover.xml
         working-directory: './'
