@@ -7,6 +7,8 @@ namespace Umbrellio\LTree\tests\functional\Helpers;
 use Generator;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Umbrellio\LTree\Collections\LTreeCollection;
 use Umbrellio\LTree\Exceptions\LTreeReflectionException;
 use Umbrellio\LTree\Exceptions\LTreeUndefinedNodeException;
@@ -17,9 +19,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
 {
     private $hits;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeCantHaveUnknownParent()
     {
         $this->expectException(LTreeUndefinedNodeException::class);
@@ -28,9 +28,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
             ->toTree();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeCantBeParentToItself()
     {
         $this->expectException(LTreeReflectionException::class);
@@ -39,9 +37,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
             ->toTree();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findSuccess(): void
     {
         $tree = $this
@@ -58,10 +54,8 @@ class LTreeNodeTest extends LTreeBaseTestCase
         $this->assertNotNull($tree->findInTree(1)->findInTree(2));
     }
 
-    /**
-     * @test
-     * @dataProvider provideUnknownNodes
-     */
+    #[Test]
+    #[DataProvider('provideUnknownNodes')]
     public function findFail($node): void
     {
         $tree = $this
@@ -70,7 +64,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
         $this->assertNull($tree->findInTree($node));
     }
 
-    public function provideUnknownNodes(): Generator
+    public static function provideUnknownNodes(): Generator
     {
         yield '-1' => [
             'node' => -1,
@@ -83,9 +77,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countDescendants(): void
     {
         $tree = $this
@@ -99,9 +91,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
         $this->assertSame(1, $tree->findInTree(11)->countDescendants());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function each()
     {
         $tree = $this
@@ -120,18 +110,14 @@ class LTreeNodeTest extends LTreeBaseTestCase
         $this->assertCount(0, $collection);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function toTreeOnEmptyCollection(): void
     {
         $collection = new LTreeCollection();
         $this->assertInstanceOf(LTreeNode::class, $collection->toTree());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function toCollection(): void
     {
         $tree = $this
@@ -147,9 +133,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function toTreeArray(): void
     {
         $formatter = static function ($item) {
@@ -177,9 +161,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
         $this->assertArrayNotHasKey('id', $node);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodePresenter()
     {
         $tree = $this
@@ -194,9 +176,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
         $this->assertNotNull($node->model->getTable());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sortFail(): void
     {
         $tree = $this
@@ -206,9 +186,7 @@ class LTreeNodeTest extends LTreeBaseTestCase
         $tree->sortTree(['name']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sort()
     {
         $tree = $this

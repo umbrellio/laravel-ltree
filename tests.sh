@@ -8,4 +8,5 @@ sed -e "s/\${USERNAME}/postgres/" \
     phpunit.xml.dist > phpunit.xml
 COMPOSER_MEMORY_LIMIT=-1 composer update
 composer lint
-php -d pcov.directory='.' vendor/bin/phpunit --coverage-html build --coverage-text
+php vendor/bin/phpunit -c phpunit.xml --migrate-configuration
+php -d xdebug.mode=coverage -d memory_limit=-1 vendor/bin/phpunit --coverage-html build --coverage-text

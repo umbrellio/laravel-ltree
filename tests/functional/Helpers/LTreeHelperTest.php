@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Umbrellio\LTree\tests\functional\Helpers;
 
+use PHPUnit\Framework\Attributes\Test;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\tests\_data\Models\CategoryStub;
 use Umbrellio\LTree\tests\LTreeBaseTestCase;
 
 class LTreeHelperTest extends LTreeBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createViaServiceRoot(): void
     {
         $node = $this->createCategory([
@@ -25,9 +24,7 @@ class LTreeHelperTest extends LTreeBaseTestCase
         $this->assertSame('15', $node->getLtreePath(LTreeModelInterface::AS_STRING));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moveSubtrees(): void
     {
         $nodes = $this->getCategories();
@@ -44,9 +41,7 @@ class LTreeHelperTest extends LTreeBaseTestCase
         $this->assertSame(11, $root->getLtreeParentId());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function proxyColumns(): void
     {
         $nodeMoscow = $this->findNodeByPath('1.3');
@@ -69,9 +64,7 @@ class LTreeHelperTest extends LTreeBaseTestCase
         $this->assertNull($nodeMoscow->name);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deleteRoot(): void
     {
         $root = $this->getRoot();
@@ -81,9 +74,7 @@ class LTreeHelperTest extends LTreeBaseTestCase
         $this->assertFalse($root::descendantsOf($root)->exists());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deleteSubtree(): void
     {
         $root = $this->getRoot();
@@ -94,9 +85,7 @@ class LTreeHelperTest extends LTreeBaseTestCase
         $this->assertSame(1, $root::descendantsOf($root)->count());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deleteViaServiceSubtree(): void
     {
         $root = $this->getRoot();

@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\tests\functional\Models;
 
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Umbrellio\LTree\tests\_data\Models\CategoryStub;
 use Umbrellio\LTree\tests\LTreeBaseTestCase;
 
 class LTreeModelTest extends LTreeBaseTestCase
 {
-    /**
-     * @test
-     * @dataProvider provideLevels
-     */
+    #[Test]
+    #[DataProvider('provideLevels')]
     public function getLtreeLevel(string $path, int $level): void
     {
         $this->assertSame($level, $this ->findNodeByPath($path) ->getLtreeLevel());
     }
 
-    public function provideLevels(): Generator
+    public static function provideLevels(): Generator
     {
         yield 'root' => [
             'path' => '1',
@@ -35,30 +35,26 @@ class LTreeModelTest extends LTreeBaseTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider providePaths
-     */
+    #[Test]
+    #[DataProvider('providePaths')]
     public function parentsOf(array $paths, int $expectedCount): void
     {
         $this->assertCount($expectedCount, CategoryStub::parentsOf($paths)->get());
     }
 
-    public function providePaths(): Generator
+    public static function providePaths(): Generator
     {
         yield 'single_as_array' => [
             'paths' => ['11.12'],
-            'expected' => 2,
+            'expectedCount' => 2,
         ];
         yield 'all_as_array' => [
             'paths' => ['11.12', '1.2.5'],
-            'expected' => 5,
+            'expectedCount' => 5,
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function root(): void
     {
         $node = $this->findNodeByPath('1.2.5');
@@ -68,9 +64,7 @@ class LTreeModelTest extends LTreeBaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ancestors(): void
     {
         $root = $this->getRoot();
@@ -80,9 +74,7 @@ class LTreeModelTest extends LTreeBaseTestCase
         $this->assertTrue($node2->isParentOf(5));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAncestorByLevel(): void
     {
         $root = $this->getRoot();
@@ -100,9 +92,7 @@ class LTreeModelTest extends LTreeBaseTestCase
         $this->assertSame($node8->getAncestorByLevel(3)->getKey(), $node6->getKey());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function children(): void
     {
         $node11 = $this->findNodeByPath('11');
