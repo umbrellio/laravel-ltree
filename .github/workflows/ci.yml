@@ -13,10 +13,10 @@ on:
 
 env:
   COVERAGE: '1'
-  php_extensions: 'apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip'
+  php_extensions: 'apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip, xdebug'
   key: cache-v0.1
   DB_USER: 'postgres'
-  DB_NAME: 'testing'
+  DB_NAME: 'postgres'
   DB_PASSWORD: 'postgres'
   DB_HOST: '127.0.0.1'
 
@@ -26,14 +26,17 @@ jobs:
     timeout-minutes: 20
     strategy:
       matrix:
-        operating_system:
-          - ubuntu-latest
-        php_versions:
-          - '7.4'
+        operating_system: [ubuntu-latest]
+        experimental: [false]
+        php_versions: ['8.3']
+        include:
+          - operating_system: 'ubuntu-latest'
+            php_versions: '8.3'
+            experimental: true
       fail-fast: false
     env:
       PHP_CS_FIXER_FUTURE_MODE: '0'
-    name: 'Lint PHP'
+    name: 'Linter / PHP ${{ matrix.php_versions }} '
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
@@ -63,58 +66,24 @@ jobs:
       - name: 'Setup problem matchers for PHPUnit'
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
       - name: 'Install PHP dependencies with Composer'
+        continue-on-error: ${{ matrix.experimental }}
         run: COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
         working-directory: './'
       - name: 'Linting PHP source files'
+        continue-on-error: ${{ matrix.experimental }}
         run: 'vendor/bin/ecs check --config=ecs.php .'
   test:
     strategy:
       fail-fast: false
       matrix:
-        experimental:
-          - false
-        operating_system:
-          - ubuntu-latest
-        postgres:
-          - '10'
-          - '11'
-          - '12'
-        php_versions:
-          - '7.3'
-          - '7.4'
-          - '8.0'
+        experimental: [false]
+        operating_system: [ubuntu-latest]
+        postgres: ['10', '11', '12', '13', '14', '15']
+        php_versions: ['8.3']
         include:
           - operating_system: ubuntu-latest
-            postgres: '9.6'
-            php_versions: '7.3'
-            experimental: false
-          - operating_system: ubuntu-latest
-            postgres: '9.6'
-            php_versions: '7.4'
-            experimental: false
-          - operating_system: ubuntu-latest
-            postgres: '10'
-            php_versions: '8.0'
-            experimental: true
-          - operating_system: ubuntu-latest
-            postgres: '11'
-            php_versions: '8.0'
-            experimental: true
-          - operating_system: ubuntu-latest
-            postgres: '12'
-            php_versions: '8.0'
-            experimental: true
-          - operating_system: ubuntu-latest
-            postgres: '13'
-            php_versions: '8.0'
-            experimental: true
-          - operating_system: ubuntu-latest
-            postgres: '14'
-            php_versions: '8.1'
-            experimental: true
-          - operating_system: ubuntu-latest
-            postgres: '15'
-            php_versions: '8.2'
+            postgres: '16'
+            php_versions: '8.4'
             experimental: true
     runs-on: '${{ matrix.operating_system }}'
     services:
@@ -158,10 +127,11 @@ jobs:
         with:
           php-version: ${{ matrix.php_versions }}
           extensions: ${{ env.php_extensions }}
-          ini-values: 'pcov.directory=src, date.timezone=UTC, upload_max_filesize=20M, post_max_size=20M, memory_limit=512M, short_open_tag=Off'
-          coverage: pcov
+          ini-values: 'date.timezone=UTC, upload_max_filesize=20M, post_max_size=20M, memory_limit=512M, short_open_tag=Off, xdebug.mode="develop,coverage"'
+          coverage: xdebug
           tools: 'phpunit'
       - name: 'Install PHP dependencies with Composer'
+        continue-on-error: ${{ matrix.experimental }}
         run: COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
         working-directory: './'
       - name: 'Run Unit Tests with PHPUnit'
@@ -172,9 +142,11 @@ jobs:
               -e "s/\${DATABASE}/${{ env.DB_NAME }}/" \
               -e "s/\${HOST}/${{ env.DB_HOST }}/" \
               phpunit.xml.dist > phpunit.xml
+          ./vendor/bin/phpunit -c phpunit.xml --migrate-configuration
           ./vendor/bin/phpunit \
             --stderr \
-            --coverage-clover build/logs/clover.xml
+            --coverage-clover build/logs/clover.xml \
+            --coverage-text
         working-directory: './'
       - name: 'Upload coverage results to Coveralls'
         if: ${{ !matrix.experimental }}

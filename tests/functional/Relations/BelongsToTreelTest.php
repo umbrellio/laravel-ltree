@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\tests\functional\Relations;
 
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Umbrellio\LTree\Exceptions\InvalidTraitInjectionClass;
 use Umbrellio\LTree\tests\_data\Models\CategorySomeStub;
 use Umbrellio\LTree\tests\_data\Models\ProductStub;
@@ -12,42 +14,40 @@ use Umbrellio\LTree\tests\LTreeBaseTestCase;
 
 class BelongsToTreelTest extends LTreeBaseTestCase
 {
-    public function provideBelongsParentsTree(): Generator
+    public static function provideBelongsParentsTree(): Generator
     {
         yield 'two_levels' => [
             'path' => '11.12',
             'count' => 2,
-            'expected1' => 11,
-            'expected2' => 12,
-            'expected3' => null,
+            'level1' => 11,
+            'level2' => 12,
+            'level3' => null,
         ];
         yield 'three_levels' => [
             'path' => '1.2.5',
             'count' => 3,
-            'expected1' => 1,
-            'expected2' => 2,
-            'expected3' => 5,
+            'level1' => 1,
+            'level2' => 2,
+            'level3' => 5,
         ];
     }
 
-    public function provideBelongsDescendantsTree(): Generator
+    public static function provideBelongsDescendantsTree(): Generator
     {
         yield 'with_descendants' => [
             'path' => '1.3',
             'count' => 6,
-            'expected1' => 3,
-            'expected2' => 6,
-            'expected3' => 10,
-            'expected4' => 8,
-            'expected5' => 9,
-            'expected6' => 7,
+            'level1' => 3,
+            'level2' => 6,
+            'level3' => 10,
+            'level4' => 8,
+            'level5' => 9,
+            'level6' => 7,
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideBelongsParentsTree
-     */
+    #[Test]
+    #[DataProvider('provideBelongsParentsTree')]
     public function getBelongsToParentsTree($path, $count, $level1, $level2, $level3)
     {
         $product = $this->createProduct([]);
@@ -70,10 +70,8 @@ class BelongsToTreelTest extends LTreeBaseTestCase
         $this->assertSame($level3, optional($itemWith->categoryAncestorsTree->get(2))->getKey());
     }
 
-    /**
-     * @test
-     * @dataProvider provideBelongsDescendantsTree
-     */
+    #[Test]
+    #[DataProvider('provideBelongsDescendantsTree')]
     public function getBelongsToDescendantsTree($path, $count, $level1, $level2, $level3, $level4, $level5, $level6)
     {
         $product = $this->createProduct([]);
@@ -103,9 +101,7 @@ class BelongsToTreelTest extends LTreeBaseTestCase
         $this->assertSame($level6, optional($itemWith->categoryDescendantsTree->get(5))->getKey());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function missingParentsLtreeModel(): void
     {
         $rootSome = $this->getCategorySome([

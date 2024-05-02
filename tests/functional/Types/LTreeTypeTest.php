@@ -5,68 +5,54 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\tests\functional\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Umbrellio\LTree\tests\FunctionalTestCase;
 use Umbrellio\LTree\Types\LTreeType;
 
 class LTreeTypeTest extends FunctionalTestCase
 {
-    /**
-     * @var AbstractPlatform
-     */
-    private $abstractPlatform;
-
-    /**
-     * @var LTreeType
-     */
-    private $type;
+    private AbstractPlatform $abstractPlatform;
+    private LTreeType $type;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->type = $this
-            ->getMockBuilder(LTreeType::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->abstractPlatform = $this->getMockForAbstractClass(AbstractPlatform::class);
+        $this->type = new LTreeType();
+        $this->abstractPlatform = new PostgreSQLPlatform();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getSQLDeclaration(): void
     {
         $this->assertSame(LTreeType::TYPE_NAME, $this->type->getSQLDeclaration([], $this->abstractPlatform));
     }
 
-    /**
-     * @dataProvider providePHPValues
-     * @test
-     */
+    #[Test]
+    #[DataProvider('providePHPValues')]
     public function convertToPHPValue($value, $expected): void
     {
         $this->assertSame($expected, $this->type->convertToDatabaseValue($value, $this->abstractPlatform));
     }
 
-    public function provideDatabaseValues(): Generator
+    public static function provideDatabaseValues(): Generator
     {
         yield [null, null];
         yield ['1.2.3', [1, 2, 3]];
         yield [1, [1]];
     }
 
-    /**
-     * @dataProvider provideDatabaseValues
-     * @test
-     */
+    #[Test]
+    #[DataProvider('provideDatabaseValues')]
     public function convertToDatabaseValue($value, $expected): void
     {
         $this->assertSame($expected, $this->type->convertToPHPValue($value, $this->abstractPlatform));
     }
 
-    public function providePHPValues(): Generator
+    public static function providePHPValues(): Generator
     {
         yield [null, null];
         yield [1, '1'];
@@ -74,9 +60,7 @@ class LTreeTypeTest extends FunctionalTestCase
         yield [[1, 2, 3], '1.2.3'];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getTypeName(): void
     {
         $this->assertSame(LTreeType::TYPE_NAME, $this->type->getName());

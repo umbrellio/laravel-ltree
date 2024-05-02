@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\tests\functional\Resources;
 
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Umbrellio\LTree\Exceptions\LTreeUndefinedNodeException;
 use Umbrellio\LTree\Interfaces\LTreeModelInterface;
 use Umbrellio\LTree\tests\_data\Models\CategoryStub;
@@ -12,9 +14,7 @@ use Umbrellio\LTree\tests\LTreeBaseTestCase;
 
 class LTreeCollectionTest extends LTreeBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function collectionCanBeConvertedIntoTree()
     {
         $tree = $this
@@ -26,15 +26,13 @@ class LTreeCollectionTest extends LTreeBaseTestCase
         $this->assertSame($tree, $tree->getChildren()[0]->getParent());
     }
 
-    /**
-     * @test
-     * @dataProvider provideNoConstencyTree
-     */
-    public function loadMissingNodes(array $ids, array $expected): void
+    #[Test]
+    #[DataProvider('provideNoConstencyTree')]
+    public function loadMissingNodes(array $items, array $expected): void
     {
         $this->assertSame(
             CategoryStub::query()
-                ->whereKey($ids)
+                ->whereKey($items)
                 ->get()
                 ->toTree()
                 ->toCollection()
@@ -47,15 +45,13 @@ class LTreeCollectionTest extends LTreeBaseTestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider providePartialConstencyTree
-     */
-    public function withoutLoadMissingForPartialTree(array $ids, array $expected): void
+    #[Test]
+    #[DataProvider('providePartialConstencyTree')]
+    public function withoutLoadMissingForPartialTree(array $items, array $expected): void
     {
         $this->assertSame(
             CategoryStub::query()
-                ->whereKey($ids)
+                ->whereKey($items)
                 ->get()
                 ->toTree(true, false)
                 ->toCollection()
@@ -68,23 +64,21 @@ class LTreeCollectionTest extends LTreeBaseTestCase
         );
     }
 
-    public function provideTreeWithoutLeaves(): Generator
+    public static function provideTreeWithoutLeaves(): Generator
     {
         yield 'without_leaves' => [
-            'ids' => [10, 7, 12],
+            'items' => [10, 7, 12],
             'expected' => [1, 3, 6, 11],
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideTreeWithoutLeaves
-     */
-    public function withoutLeaves(array $ids, array $expected): void
+    #[Test]
+    #[DataProvider('provideTreeWithoutLeaves')]
+    public function withoutLeaves(array $items, array $expected): void
     {
         $this->assertSame(
             CategoryStub::query()
-                ->whereKey($ids)
+                ->whereKey($items)
                 ->get()
                 ->withLeaves(false)
                 ->toTree()
@@ -98,25 +92,23 @@ class LTreeCollectionTest extends LTreeBaseTestCase
         );
     }
 
-    public function provideNoConstency(): Generator
+    public static function provideNoConstency(): Generator
     {
         yield 'non_consistent_without_loading' => [
-            'ids' => [1, 6, 8],
+            'items' => [1, 6, 8],
             'expected' => [1, 6, 8],
             'loadMissing' => false,
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideNoConstency
-     */
-    public function withoutLoadMissingNodes(array $ids, array $expected): void
+    #[Test]
+    #[DataProvider('provideNoConstency')]
+    public function withoutLoadMissingNodes(array $items, array $expected, bool $loadMissing): void
     {
         $this->expectException(LTreeUndefinedNodeException::class);
         $this->assertSame(
             CategoryStub::query()
-                ->whereKey($ids)
+                ->whereKey($items)
                 ->get()
                 ->toTree(true, false)
                 ->toCollection()
@@ -129,10 +121,10 @@ class LTreeCollectionTest extends LTreeBaseTestCase
         );
     }
 
-    public function provideNoConstencyTree(): Generator
+    public static function provideNoConstencyTree(): Generator
     {
         yield 'non_consistent_with_loading' => [
-            'ids' => [7, 3, 12],
+            'items' => [7, 3, 12],
             'expected' => [1, 3, 7, 11, 12],
         ];
         yield 'consistent' => [
@@ -140,7 +132,7 @@ class LTreeCollectionTest extends LTreeBaseTestCase
             'expected' => [1, 3, 7],
         ];
     }
-    public function providePartialConstencyTree(): Generator
+    public static function providePartialConstencyTree(): Generator
     {
         yield 'partial with single branch without single nodes' => [
             'items' => [3, 6, 7, 8, 9, 10],

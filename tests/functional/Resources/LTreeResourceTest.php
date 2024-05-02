@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Umbrellio\LTree\tests\functional\Resources;
 
 use Illuminate\Http\Request;
+use PHPUnit\Framework\Attributes\Test;
 use Umbrellio\LTree\tests\_data\Models\CategoryStub;
 use Umbrellio\LTree\tests\_data\Models\CategoryStubResourceCollection;
 use Umbrellio\LTree\tests\LTreeBaseTestCase;
 
 class LTreeResourceTest extends LTreeBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function resources(): void
     {
         $resource = new CategoryStubResourceCollection(
