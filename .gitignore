@@ -3,7 +3,7 @@
 .ecs_cache
 .phpunit.cache
 phpunit.xml
-/build/*
+/build
 .phpunit.result.cache
 .DS_Store
 composer.lock
