@@ -13,8 +13,6 @@ interface LTreeModelInterface extends HasLTreeRelations, HasLTreeScopes, ModelIn
 {
     public function getLtreeProxyDeleteColumns(): array;
     public function getLtreeProxyUpdateColumns(): array;
-
     public function isParentOf(int $id): bool;
-
     public function getAncestorByLevel(int $level = 1);
 }

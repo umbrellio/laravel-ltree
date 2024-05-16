@@ -64,7 +64,7 @@ class LTreeCollection extends Collection
     {
         foreach ($this->items as $key => $item) {
             /** @var LTreeModelTrait $item */
-            if ($item->ltreeChildren->isEmpty()) {
+            if ($item->ltreeChildren->isEmpty() && $item->getLtreeParentId()) {
                 $this->forget($key);
             }
         }
