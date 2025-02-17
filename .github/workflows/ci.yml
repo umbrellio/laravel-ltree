@@ -13,128 +13,189 @@ on:
 
 env:
   COVERAGE: '1'
-  php_extensions: 'apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip, xdebug'
+  php_extensions: apcu, bcmath, ctype, curl, dom, iconv, intl, json, mbstring, opcache, openssl, pdo, pdo_pgsql, pcntl, pcov, posix, redis, session, simplexml, sockets, tokenizer, xml, xmlwriter, zip, xdebug
   key: cache-v0.1
-  DB_USER: 'postgres'
-  DB_NAME: 'postgres'
-  DB_PASSWORD: 'postgres'
-  DB_HOST: '127.0.0.1'
+  DB_USER: postgres
+  DB_NAME: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: 127.0.0.1
 
 jobs:
   lint:
-    runs-on: '${{ matrix.operating_system }}'
+
+
+    runs-on: ${{ matrix.operating_system }}
+
     timeout-minutes: 20
+
     strategy:
       matrix:
         operating_system: [ubuntu-latest]
         experimental: [false]
-        php_versions: ['8.3']
+        php_versions: ['8.2', '8.3', '8.3', '8.4']
         include:
-          - operating_system: 'ubuntu-latest'
+          - operating_system: ubuntu-latest
             php_versions: '8.4'
             experimental: true
       fail-fast: false
+
     env:
       PHP_CS_FIXER_FUTURE_MODE: '0'
-    name: 'Linter / PHP ${{ matrix.php_versions }} '
+
+
+
+    name: Linter / PHP ${{ matrix.php_versions }} 
+
+
+
     steps:
-      - name: 'Checkout'
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: 'Setup cache environment'
+
+
+
+      - name: Setup cache environment
         id: cache-env
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: '${{ matrix.php_versions }}'
-          extensions: '${{ env.php_extensions }}'
-          key: '${{ env.key }}'
-      - name: 'Cache extensions'
+          php-version: ${{ matrix.php_versions }}
+          extensions: ${{ env.php_extensions }}
+          key: ${{ env.key }}
+
+
+
+      - name: Cache extensions
         uses: actions/cache@v1
         with:
-          path: '${{ steps.cache-env.outputs.dir }}'
-          key: '${{ steps.cache-env.outputs.key }}'
-          restore-keys: '${{ steps.cache-env.outputs.key }}'
-      - name: 'Setup PHP'
+          path: ${{ steps.cache-env.outputs.dir }}
+          key: ${{ steps.cache-env.outputs.key }}
+          restore-keys: ${{ steps.cache-env.outputs.key }}
+
+
+
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_versions }}
-          extensions: '${{ env.php_extensions }}'
+          extensions: ${{ env.php_extensions }}
           ini-values: memory_limit=-1
           tools: pecl, composer
           coverage: none
-      - name: 'Setup problem matchers for PHP (aka PHP error logs)'
-        run: 'echo "::add-matcher::${{ runner.tool_cache }}/php.json"'
-      - name: 'Setup problem matchers for PHPUnit'
-        run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
-      - name: 'Install PHP dependencies with Composer'
+
+
+
+      - name: Setup problem matchers for PHP (aka PHP error logs)
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+
+
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+
+
+      - name: Install PHP dependencies with Composer
         continue-on-error: ${{ matrix.experimental }}
         run: COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
-        working-directory: './'
-      - name: 'Linting PHP source files'
+        working-directory: ./
+
+
+
+      - name: Linting PHP source files
         continue-on-error: ${{ matrix.experimental }}
-        run: 'vendor/bin/ecs check --config=ecs.php .'
+        run: vendor/bin/ecs check --config=ecs.php .
+
   test:
+
     strategy:
       fail-fast: false
       matrix:
         experimental: [false]
         operating_system: [ubuntu-latest]
         postgres: ['10', '11', '12', '13', '14', '15']
-        php_versions: ['8.3']
+        php_versions: ['8.2', '8.3', '8.3', '8.4']
         include:
           - operating_system: ubuntu-latest
             postgres: '16'
             php_versions: '8.4'
             experimental: true
-    runs-on: '${{ matrix.operating_system }}'
+
+
+    runs-on: ${{ matrix.operating_system }}
+
     services:
       postgres:
-        image: 'postgres:${{ matrix.postgres }}'
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: ${{ env.DB_USER }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
           POSTGRES_DB: ${{ env.DB_NAME }}
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-    name: 'Test / PHP ${{ matrix.php_versions }} / Postgres ${{ matrix.postgres }}'
+
+
+
+    name: Test / PHP ${{ matrix.php_versions }} / Postgres ${{ matrix.postgres }}
+
     needs:
       - lint
+
+
+
     steps:
-      - name: 'Checkout'
+      - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - name: 'Install postgres client'
+
+
+
+      - name: Install postgres client
         run: |
           sudo apt-get update -y
           sudo apt-get install -y libpq-dev postgresql-client
-      - name: 'Setup cache environment'
+
+
+
+      - name: Setup cache environment
         id: cache-env
         uses: shivammathur/cache-extensions@v1
         with:
           php-version: ${{ matrix.php_versions }}
           extensions: ${{ env.php_extensions }}
-          key: '${{ env.key }}'
-      - name: 'Cache extensions'
+          key: ${{ env.key }}
+
+
+
+      - name: Cache extensions
         uses: actions/cache@v1
         with:
-          path: '${{ steps.cache-env.outputs.dir }}'
-          key: '${{ steps.cache-env.outputs.key }}'
-          restore-keys: '${{ steps.cache-env.outputs.key }}'
-      - name: 'Setup PHP'
+          path: ${{ steps.cache-env.outputs.dir }}
+          key: ${{ steps.cache-env.outputs.key }}
+          restore-keys: ${{ steps.cache-env.outputs.key }}
+
+
+
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_versions }}
           extensions: ${{ env.php_extensions }}
-          ini-values: 'date.timezone=UTC, upload_max_filesize=20M, post_max_size=20M, memory_limit=512M, short_open_tag=Off, xdebug.mode="develop,coverage"'
+          ini-values: date.timezone=UTC, upload_max_filesize=20M, post_max_size=20M, memory_limit=512M, short_open_tag=Off, xdebug.mode="develop,coverage"
           coverage: xdebug
-          tools: 'phpunit'
-      - name: 'Install PHP dependencies with Composer'
+          tools: phpunit
+
+
+
+      - name: Install PHP dependencies with Composer
         continue-on-error: ${{ matrix.experimental }}
         run: COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
-        working-directory: './'
-      - name: 'Run Unit Tests with PHPUnit'
+        working-directory: ./
+
+
+
+      - name: Run Unit Tests with PHPUnit
         continue-on-error: ${{ matrix.experimental }}
         run: |
           sed -e "s/\${USERNAME}/${{ env.DB_USER }}/" \
@@ -147,9 +208,12 @@ jobs:
             --stderr \
             --coverage-clover build/logs/clover.xml \
             --coverage-text
-        working-directory: './'
-      - name: 'Upload coverage results to Coveralls'
-        if: ${{ !matrix.experimental }}
+        working-directory: ./
+
+
+
+      - name: Upload coverage results to Coveralls
+        if: '${{ !matrix.experimental }}'
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_PARALLEL: true
@@ -158,12 +222,22 @@ jobs:
           ./vendor/bin/php-coveralls \
             --coverage_clover=build/logs/clover.xml \
             -v
+
   coverage:
+
     needs: test
+
+
     runs-on: ubuntu-latest
-    name: "Code coverage"
+
+
+
+    name: Code coverage
+
+
+
     steps:
-      - name: 'Coveralls Finished'
+      - name: Coveralls Finished
         uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
