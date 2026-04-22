@@ -28,7 +28,7 @@
     "umbrellio/laravel-common-objects": "*"
   },
   "require-dev": {
-    "umbrellio/code-style-php": "^1.0",
+    "umbrellio/code-style-php": "^1.0 || ^2.0",
     "orchestra/testbench": "^9.0",
     "php-coveralls/php-coveralls": "^2.1",
     "squizlabs/php_codesniffer": "^3.5"
